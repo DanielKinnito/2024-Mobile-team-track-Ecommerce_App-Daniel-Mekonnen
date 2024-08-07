@@ -6,6 +6,7 @@ A Flutter Mobile Application built for the 2024 A2SV Summer Internship in the mo
 - [Task 7](#task-7)
 - [Task 8](#task-8)
 - [Task 9](#task-9)
+- [Task 10](#task-10)
 
 ## Task 6
 ### Implementing a Flutter User Interface
@@ -87,3 +88,24 @@ Make sure to also include tests for these. ✔️
     - GetAllProducts: A use case for retrieving all products. ✔️
 - Repositories:
   - Implement a ProductRepository that uses the defined use cases to perform CRUD operations on the Product entity. ✔️
+
+## Task 10
+### Data Overview Layer
+Flutter projects do not come with specific folders like `core` or `features`. These folder structures are part of the Clean Architecture pattern, which provides a way to organize code for better separation of concerns and maintainability.
+
+1. Step 1: Folder Setup
+  Organize the project structure according to Clean Architecture principles. Create the following folders in the `lib` directory:
+  - `core`: Contains the shared core components, entities, and error handling logic. ✔️
+  - `features`: Includes feature-specific modules. ✔️
+  - `features/product`: This will be the main module for the Ecommerce feature. ✔️
+  - `test`: Contains all the unit and widget tests. ✔️
+
+2. Step 2: Implement Models
+  - Inside the `features/ecommerce/data/models` directory, create a `Product_model.dart` file. ✔️
+  - Define the `ProductModel` class that mirrors the `Product` entity, and include conversion logic to and from JSON using `fromJson` and `toJson` methods. ✔️
+  - Write unit tests for the `ProductModel` to ensure its correctness. ✔️
+
+3. Step 3: Documentation
+- Update the project documentation to include information about architecture, data flow. ✔️
+- Ensure that the documentation is clear and comprehensive. ✔️
+- Make sure that you write on github readme.md ✔️
