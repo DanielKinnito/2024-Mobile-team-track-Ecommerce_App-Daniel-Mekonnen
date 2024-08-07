@@ -1,111 +1,77 @@
-# Ecommerce App
-A Flutter Mobile Application built for the 2024 A2SV Summer Internship in the mobile team.
+# Ecommerce Application with Clean Architecture
+This ecommerce mobile app was made using flutter with the principles of clean architecture.
 
 ## Table of contents
-- [Task 6](#task-6)
-- [Task 7](#task-7)
-- [Task 8](#task-8)
-- [Task 9](#task-9)
-- [Task 10](#task-10)
+- [Getting Started](#getting-started)
+- [Architecture](#architecture)
+- [Packages Used](#packages-used)
+- [Features](#features)
+- [Testing](#testing)
 
-## Task 6
-### Implementing a Flutter User Interface
+## Getting started
+To get started with the app, follow these steps:
 
-### Objective: 
-- Create a Flutter user interface that replicates the design of a provided picture.
+1. Clone the repository:
 
-### Task: 
-- You are tasked with implementing a user interface in Flutter that replicates the design of the provided picture. The picture will serve as a reference for the visual appearance and layout of the user interface you need to create.
+   ````bash
+   git clone https://github.com/your-username/todo-app-clean-architecture.git
+   ```
 
-### Figma Link: [Link]([url](https://www.figma.com/file/957Md2CrZ2B9KGjHy8RDcH/Internship?type=design&node-id=1%3A48&mode=design&t=dGzOJNr9pjkmYQog-1))
+   ````
+2. Navigate to the project directory:
 
-### Tasks Progress
-- Home Page ✔️
-- Details Page ✔️
-- Add/Update Page ✔️
-- Search Page ✔️
-  
-### Screenshots
-#### Home Page
-- ![image](https://github.com/user-attachments/assets/4c902287-db27-4b37-b043-41a2f1804ace)
+   ````bash
+   cd todo-app-clean-architecture
+   ```
 
-#### Details Page
-- ![image](https://github.com/user-attachments/assets/c712be2c-2fb7-46d8-9900-538f04089b06)
-- ![image](https://github.com/user-attachments/assets/d1284ec6-6056-4a33-84fb-e6d3f2efbc67)
+   ````
+3. Install the dependencies:
 
-#### Add/Update Page
-- ![image](https://github.com/user-attachments/assets/d11cf34f-f949-490d-9559-3c247ff2ec1a)
-- ![image](https://github.com/user-attachments/assets/12a48067-5442-417c-91d4-9dfb221ceaf1)
+   ````bash
+   flutter pub get
+   ```
 
-#### Search Page
-- ![image](https://github.com/user-attachments/assets/d53534ad-3a73-413a-9005-c742a4d04e29)
-- ![image](https://github.com/user-attachments/assets/f446ae93-98d2-46db-9b55-d6275e3ae538)
+   ````
+4. Run the app:
 
-## Task 7
-### Implementing Navigation and Routing in a ecommerce Mobile App
-You have been tasked with building a simple ecommerce mobile app using Flutter. The app should allow users to create, view, update and delete products. As part of this project, you are required to implement navigation and routing features to ensure a seamless user experience.
+   ````bash
+   flutter run
+   ```
 
-1. Screen Navigation: (3 points)
-The app should have the following screens:
-- A home screen that displays a list of all the products. ✔️
-- A screen to add/edit a new product. ✔️
-- A screen to view an existing product when selected from the list. ✔️
-- Implement navigation between these screens using Flutter's built-in navigation methods. ✔️
-2. Named Routes: (1 point)
-- Define named routes for each screen in the app. Utilize named routes to navigate between screens rather than using anonymous routes. ✔️
-3. Passing Data Between Screens: (3 points)
-- When adding or editing a product, allow the user to input the product's title and description. ✔️
-- Pass the product data from the home screen to the add/edit product screens and back to the home screen when the product is created or updated. ✔️
-4. Navigation Animations: (2 points)
-- Implement smooth navigation animations and transitions between screens to enhance the user experience. ✔️
-5. Handling Navigation Events: (1 point)
-- When the user presses the back button from the add/edit product screen, ensure the app navigates back to the home screen. Handle any other necessary navigation events appropriately. ✔️
+## Architecture
+This mobile application follows the principles of clean architecture by separating the UI, business logic and data.
+1. **Presentation Layer**: This layer is responsible for displaying the UI and handling user input. It contains the app's screens, widgets, and the [BLoC](https://pub.dev/packages/flutter_bloc) for state management.
 
-## Task 8
-### Setting Up Linter Rules in Flutter
-The primary objective of this task is to set up good linter rules in your Flutter project. Linter rules help maintain code quality, readability, and consistency across your project, making it easier to collaborate and scale.
+2. **Domain Layer**: This layer contains the business logic, entities and use cases for the app. It defines the entities, repositories, and interactors that represent the core functionality of the app. The domain layer is independent of the presentation and data layers.
 
-### Deliverables
-1. A Flutter project (ecommerce_app) with linter rules set up and configured. ✔️
+3. **Data Layer**: This layer is responsible for retrieving and storing data. It includes implementations of repositories and data sources.
 
-## Task 9
-### Entities, Use Cases, and Repositories
-In this task, we will build upon the existing eCommerce Mobile App using the knowledge gained from the TDD Clean Architecture Course. We will implement CRUD (Create, Read, Update, Delete) operations for products while adhering to Clean Architecture principles and employing Test-Driven Development (TDD) practices.
-### Task Objectives
-- Create entities for the products in the eCommerce Mobile App.
-- Define use cases for inserting, updating, deleting, and getting a product.
-- Implement repositories to handle data operations for the products.
-### Task Progress
-Make sure to also include tests for these. ✔️
-- Entities:
-  - Define a Product entity with properties such as id, name, description, price and imageUrl. ✔️
-- Use Cases:
-  - Define use cases for each of the CRUD operations
-    - InsertProduct: A use case for adding a new product. ✔️
-    - UpdateProduct: A use case for updating an existing product. ✔️
-    - DeleteProduct: A use case for removing a product. ✔️
-    - GetProduct: A use case for retrieving the details of a product. ✔️
-    - GetAllProducts: A use case for retrieving all products. ✔️
-- Repositories:
-  - Implement a ProductRepository that uses the defined use cases to perform CRUD operations on the Product entity. ✔️
+## Packages Used
 
-## Task 10
-### Data Overview Layer
-Flutter projects do not come with specific folders like `core` or `features`. These folder structures are part of the Clean Architecture pattern, which provides a way to organize code for better separation of concerns and maintainability.
+These packages were used in this application:
+- [intl](https://pub.dev/packages/intl): Provides internationalization and localization utilities.
+- [equatable](https://pub.dev/packages/equatable): Provides value equality for Dart classes.
+- [mockito](https://pub.dev/packages/mockito): Provides a mockito-based mock package for testing.
+- [dartz](https://pub.dev/packages/dartz): Provides functional programming features such as Option and Either.
+- [rxDart](https://pub.dev/packages/rxdart): Provides reactive programming features for Dart.
 
-1. Step 1: Folder Setup
-  Organize the project structure according to Clean Architecture principles. Create the following folders in the `lib` directory:
-  - `core`: Contains the shared core components, entities, and error handling logic. ✔️
-  - `features`: Includes feature-specific modules. ✔️
-  - `features/product`: This will be the main module for the Ecommerce feature. ✔️
-  - `test`: Contains all the unit and widget tests. ✔️
+## Features
 
-2. Step 2: Implement Models
-  - Inside the `features/ecommerce/data/models` directory, create a `Product_model.dart` file. ✔️
-  - Define the `ProductModel` class that mirrors the `Product` entity, and include conversion logic to and from JSON using `fromJson` and `toJson` methods. ✔️
-  - Write unit tests for the `ProductModel` to ensure its correctness. ✔️
+The app includes the following features:
 
-3. Step 3: Documentation
-- Update the project documentation to include information about architecture, data flow. ✔️
-- Ensure that the documentation is clear and comprehensive. ✔️
-- Make sure that you write on github readme.md ✔️
+- Add a new Product: Users can add new products by providing the image url, id, name, price, and .the product's description.
+- View all Products: Users can see a list of all products with their information mentioned above.
+- View a single Prodcut: Users can view the details of a specific product.
+- Update a prduct: Users can update the any information of status of a product.
+- Delete a product: Users can delete a prouct from the list.
+
+
+## Testing
+- Unit tests for core domain logic and repositories
+- Unit tests for models and repositories in the data layer.
+
+Run all tests:
+
+   ````bash
+   flutter test
+   ````
