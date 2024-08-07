@@ -1,3 +1,3 @@
 abstract class NoParamUsecase<T>{
-   call();
+   T call();
 }

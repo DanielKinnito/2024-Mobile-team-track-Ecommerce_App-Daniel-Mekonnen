@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+// import 'package:equatable/equatable.dart';
 
 class Product /*extends Equatable*/{
   final String imageUrl;
@@ -9,7 +9,6 @@ class Product /*extends Equatable*/{
   final String? category;
   final List? sizes;
 
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:1154890968.
   const Product({
     required this.imageUrl,
     required this.id,

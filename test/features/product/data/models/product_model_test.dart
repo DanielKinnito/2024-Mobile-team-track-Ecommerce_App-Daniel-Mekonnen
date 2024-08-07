@@ -3,6 +3,7 @@ import 'package:myapp/features/product/data/models/product_model.dart';
 import 'package:myapp/features/product/domain/entities/product.dart';
 
 void main() {
+  // create a test instance of ProductModel
   var testProductModel = ProductModel(
     id: 'id',
     name: 'name',
@@ -11,7 +12,8 @@ void main() {
     imageUrl: 'imageUrl',
   );
 
-  final test_json = {
+  // test instance of ProductModel
+  final testJson = {
     'id': 'id',
     'name': 'name',
     'description': 'description',
@@ -27,12 +29,12 @@ void main() {
   test('should correctly convert to json', () async {
     // assert
     final result = testProductModel.toJson();
-    expect(result, test_json);
+    expect(result, testJson);
   });
 
   test('should correctly convert from json', () async {
     // assert
-    final Map<String, dynamic> jsonMap = test_json;
+    final Map<String, dynamic> jsonMap = testJson;
     final result = ProductModel.fromJson(jsonMap);
     expect(result, testProductModel);
   });

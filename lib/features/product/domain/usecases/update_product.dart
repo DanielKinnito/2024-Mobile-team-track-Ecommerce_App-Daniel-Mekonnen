@@ -10,7 +10,7 @@ class UpdateProduct extends Usecase<Future<Either<Failure,void>>, Product> {
   UpdateProduct(this.repository);
 
   @override
-  Future<Either<Failure, void>> call(Product product) async {
-    return await repository.updateProduct(product);
+  Future<Either<Failure, void>> call(Product params) async {
+    return await repository.updateProduct(params);
   }
 }

@@ -2,8 +2,8 @@
 // import 'package:myapp/start-feature/presentation/pages/details_page.dart';
 // import 'package:myapp/start-feature/presentation/pages/add_update_page.dart';
 // import 'package:myapp/start-feature/presentation/pages/search_page.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,7 +55,7 @@ class _RootPageState extends State<RootPage> {
   int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return const Scaffold();
     // return Scaffold(
     //   body: HomePage(),
     // );

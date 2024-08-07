@@ -11,7 +11,7 @@ class GetProduct extends Usecase<Future<Either<Failure, Product>> , String> {
   GetProduct(this.repository);
 
   @override
-  Future<Either<Failure, Product>> call(String productId) async{
-    return await repository.getProduct(productId);
+  Future<Either<Failure, Product>> call(String params) async{
+    return await repository.getProduct(params);
   }
 }

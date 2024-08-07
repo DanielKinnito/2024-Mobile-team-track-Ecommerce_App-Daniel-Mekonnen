@@ -10,7 +10,7 @@ class InsertProduct extends Usecase<Future<Either<Failure, void>>, Product> {
   InsertProduct(this.repository);
 
   @override
-  Future<Either<Failure, void>> call(Product product) async {
-    return await repository.insertProduct(product);
+  Future<Either<Failure, void>> call(Product params) async {
+    return await repository.insertProduct(params);
   }
 }
