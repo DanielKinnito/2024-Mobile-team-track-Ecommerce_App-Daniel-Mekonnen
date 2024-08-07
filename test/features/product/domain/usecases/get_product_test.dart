@@ -32,6 +32,8 @@ void main(){
     // act
     final result = await usecase(product.id);
     // assert
-    expect(result, product);
+    expect(result, Right(product));
+    verify(productRepository.getProduct(product.id));
+    verifyNoMoreInteractions(productRepository);
   });
 }
