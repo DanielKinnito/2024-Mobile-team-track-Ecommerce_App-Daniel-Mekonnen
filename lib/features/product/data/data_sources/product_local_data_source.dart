@@ -4,7 +4,7 @@ import '../../../../core/failure/failure.dart';
 import '../../domain/entities/product.dart';
 import 'product_api.dart';
 
-class LocalProductDataSource extends ProductApi {
+class ProductLocalDataSource extends ProductApi {
   late final Product product;
   final List<Product> products = [];
 
