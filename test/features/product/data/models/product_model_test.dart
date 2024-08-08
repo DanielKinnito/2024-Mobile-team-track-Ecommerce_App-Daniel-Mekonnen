@@ -4,7 +4,7 @@ import 'package:myapp/features/product/domain/entities/product.dart';
 
 void main() {
   // create a test instance of ProductModel
-  var testProductModel = ProductModel(
+  var testProductModel = const ProductModel(
     id: 'id',
     name: 'name',
     description: 'description',

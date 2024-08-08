@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:myapp/features/product/domain/entities/product.dart';
@@ -15,8 +16,8 @@ void main() {
     getAllProducts = GetAllProducts(productRepository);
   });
 
-  var productList = [
-    const Product(
+  const productList = [
+    Product(
       id: '1',
       category: 'Men\'s Shoes',
       imageUrl: 'assets/images/leather_shoe_1.jpg',
@@ -25,7 +26,7 @@ void main() {
       price: 100.0,
       sizes: [39, 40, 41],
     ),
-    const Product(
+    Product(
       id: '2',
       category: 'Women\'s Shoes',
       imageUrl: 'assets/images/leather_shoe_2.jpg',
@@ -38,12 +39,13 @@ void main() {
 
   test('should get all products from the repository', () async {
     // arrange
-    when(productRepository.getAllProdcuts()).thenAnswer((_) => Stream.value(productList));
+    when(productRepository.getAllProdcuts()).thenAnswer((_) async => const Right(productList));
     // act
-    final result = getAllProducts();
+    final result = await getAllProducts();
     // assert
-    expect(result, emits(productList));
+    expect(result, const Right(productList));
     verify(productRepository.getAllProdcuts());
     verifyNoMoreInteractions(productRepository);
   });
+
 }
