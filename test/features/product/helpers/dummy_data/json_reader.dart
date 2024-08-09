@@ -1,8 +1,9 @@
 import 'dart:io';
 
-String readJson(String fileName) {
-  final directory = Directory.current.path;
-  final path = '$directory/test/helpers/dummy_data/$fileName';
-  print(path);
-  return File(path).readAsStringSync();
+String readJson(String name) {
+  var dir = Directory.current.path;
+  if (dir.endsWith('/test')) {
+    dir = dir.replaceAll('/test', '');
+  }
+  return File('$dir/test/$name').readAsStringSync();
 }

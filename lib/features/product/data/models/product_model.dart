@@ -17,18 +17,21 @@ class ProductModel extends Product {
       id: json['id'],
       name: json['name'],
       description: json['description'],
-      price: (json['price'] as num?)?.toDouble()??0.0,
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
       imageUrl: json['imageUrl'],
     );
   }
 
-  factory ProductModel.forLocalJson(Map<String, dynamic> json) => ProductModel(
-        id: json['id'],
-        name: json['name'],
-        description: json['description'],
-        imageUrl: json['imageUrl'],
-        price: json['price'],
-      );
+  factory ProductModel.forLocalJson(Map<String, dynamic> json) {
+    return ProductModel(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      description: json['description'] as String,
+      price: (json['price'] as num).toDouble(),
+      imageUrl: json['imageUrl'] as String,
+    );
+  }
+
   /// Method to convert the ProductModel to a JSON map
   Map<String, dynamic> toJson() {
     return {
@@ -41,10 +44,17 @@ class ProductModel extends Product {
   }
 
   Product toEntity() => Product(
-    id: id,
-    name: name,
-    description: description,
-    price: price,
-    imageUrl: imageUrl,
-  );
+        id: id,
+        name: name,
+        description: description,
+        price: price,
+        imageUrl: imageUrl,
+      );
+  static ProductModel fromDomain(Product product) => ProductModel(
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+      );
 }
