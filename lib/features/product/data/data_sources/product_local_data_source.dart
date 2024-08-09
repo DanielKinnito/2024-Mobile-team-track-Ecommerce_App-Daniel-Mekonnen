@@ -1,28 +1,44 @@
-import 'package:dartz/dartz.dart';
+import 'dart:convert';
 
+import 'package:dartz/dartz.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../../core/exception/exception.dart';
 import '../../../../core/failure/failure.dart';
 import '../../domain/entities/product.dart';
-import 'product_api.dart';
+import '../models/product_model.dart';
 
-class ProductLocalDataSource extends ProductApi {
-  late final Product product;
-  final List<Product> products = [];
+abstract class ProductLocalDataSource{
+  Future<Either<Failure, ProductModel>> getProduct(String productId);
+  Future<Either<Failure, List<Product>>> getAllProducts();
+  Future<Either<Failure, void>> insertProduct(Product product);
+  Future<Either<Failure, void>> updateProduct(Product product);
+  Future<Either<Failure, void>> deleteProduct(String productId);
+}
+
+class ProductLocalDataSourceImpl extends ProductLocalDataSource {
+  final SharedPreferences sharedPreferences;
+
+  ProductLocalDataSourceImpl({required this.sharedPreferences});
 
   @override
-  Future<Either<Failure, List<Product>>> getAllProducts() {
-    // TODO: implement getAllProducts
-    throw UnimplementedError();
+  Future<Either<Failure, ProductModel>> getProduct(String productId) async {
+    final jsonString = sharedPreferences.getString(productId);
+    if (jsonString != null) {
+      try {
+        return Right(ProductModel.forLocalJson(json.decode(jsonString)));
+      } catch (e) {
+        return Left(CacheException() as Failure);
+    }
+    } else {
+      return Left(CacheException() as Failure);
   }
+  }
+
 
   @override
   Future<Either<Failure, void>> deleteProduct(String productId) {
     // TODO: implement deleteProduct
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Either<Failure, Product>> getProduct(String productId) {
-    // TODO: implement getProduct
     throw UnimplementedError();
   }
 
@@ -37,4 +53,11 @@ class ProductLocalDataSource extends ProductApi {
     // TODO: implement updateProduct
     throw UnimplementedError();
   }
+  
+  @override
+  Future<Either<Failure, List<Product>>> getAllProducts() {
+    // TODO: implement getAllProducts
+    throw UnimplementedError();
+  }
+
 }

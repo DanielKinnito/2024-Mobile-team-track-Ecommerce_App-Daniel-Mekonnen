@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:myapp/core/failure/storage_failure.dart';
+import 'package:myapp/core/failure/failure.dart';
 import 'package:myapp/features/product/domain/entities/product.dart';
 import 'package:myapp/features/product/domain/repositories/product_repository.dart';
 import 'package:myapp/features/product/domain/usecases/update_product.dart';
@@ -40,11 +40,11 @@ void main(){
 
     test('should return a Failure when the product is not in the repository', () async {
     // arrange
-    when(productRepository.updateProduct(product)).thenAnswer((_) async => const Left(StorageFailure()));
+    when(productRepository.updateProduct(product)).thenAnswer((_) async => const Left(DatabaseFailure('Failed to update product')));
     // act
     final result = await usecase(product);
     // assert
-    expect(result, const Left(StorageFailure()));
+    expect(result, const Left(DatabaseFailure('Failed to update product')));
     verify(productRepository.updateProduct(product)).called(1);
     verifyNoMoreInteractions(productRepository);
   });

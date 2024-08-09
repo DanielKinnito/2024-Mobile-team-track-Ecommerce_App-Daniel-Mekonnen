@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:myapp/core/failure/storage_failure.dart';
+import 'package:myapp/core/failure/failure.dart';
 import 'package:myapp/features/product/domain/entities/product.dart';
 import 'package:myapp/features/product/domain/repositories/product_repository.dart';
 import 'package:myapp/features/product/domain/usecases/delete_product.dart';
@@ -36,7 +36,7 @@ void main(){
       final result = await usecase(product.id);
       // assert
       expect(result, const Right(null));
-      verify(productRepository.deleteProduct(product.id)).called(1);
+      verify(productRepository.deleteProduct(product.id));
       verifyNoMoreInteractions(productRepository);
     },
   );
@@ -44,11 +44,11 @@ void main(){
     'should return a failure when the product is not found',
     () async {
       // arrange
-      when(productRepository.deleteProduct(product.id)).thenAnswer((_) async => const Left(StorageFailure()));
+      when(productRepository.deleteProduct(product.id)).thenAnswer((_) async => const Left(DatabaseFailure('Product not found')));
       // act
       final result = await usecase(product.id);
       // assert
-      expect(result, const Left(StorageFailure()));
+      expect(result, const Left(DatabaseFailure('Product not found')));
       verify(productRepository.deleteProduct(product.id)).called(1);
       verifyNoMoreInteractions(productRepository);
     },
