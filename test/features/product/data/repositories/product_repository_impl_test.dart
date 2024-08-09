@@ -7,7 +7,8 @@ import 'package:myapp/features/product/data/models/product_model.dart';
 import 'package:myapp/features/product/data/repositories/product_repository_impl.dart';
 import 'package:myapp/features/product/domain/entities/product.dart';
 
-class MockProductRemoteDataSource extends Mock implements ProductRemoteDataSource {}
+class MockProductRemoteDataSource extends Mock
+    implements ProductRemoteDataSource {}
 
 void main() {
   late MockProductRemoteDataSource mockRemoteDataSource;
@@ -15,95 +16,96 @@ void main() {
 
   setUp(() {
     mockRemoteDataSource = MockProductRemoteDataSource();
-    repository = ProductRepositoryImpl(productRemoteDataSource: mockRemoteDataSource);
+    repository =
+        ProductRepositoryImpl(productRemoteDataSource: mockRemoteDataSource);
   });
 
-  const tProductId = '6672776eb905525c145fe0bb';
-  const tProduct = Product(
-    id: '6672776eb905525c145fe0bb',
-    imageUrl: 'https://example.com/image.jpg',
-    name: 'Product Name',
-    description: 'Product Description',
-    price: 123.0,
-  );
-  final tProductModel = ProductModel.fromDomain(tProduct);
-  final tProductList = [tProduct];
-  final tProductModelList = [tProductModel];
+  const prodcutId = '6672752cbd218790438efdb0';
+  const product = Product(
+      id: '6672752cbd218790438efdb0',
+      name: 'Anime website',
+      description: 'Explore anime characters.',
+      price: 123,
+      imageUrl:
+          'https://res.cloudinary.com/g5-mobile-track/image/upload/v1718777132/images/zxjhzrflkvsjutgbmr0f.jpg');
+  final productModel = ProductModel.fromDomain(product);
+  final productList = [product];
+  final productModelList = [productModel];
 
   group('deleteProduct', () {
     test('should return Right when delete is successful', () async {
       // Arrange
-      when(mockRemoteDataSource.deleteProduct(tProductId))
+      when(mockRemoteDataSource.deleteProduct(prodcutId))
           .thenAnswer((_) async => const Right(null));
       // Act
-      final result = await repository.deleteProduct(tProductId);
+      final result = await repository.deleteProduct(prodcutId);
       // Assert
       expect(result, const Right(null));
-      verify(mockRemoteDataSource.deleteProduct(tProductId));
+      verify(mockRemoteDataSource.deleteProduct(prodcutId));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
 
     test('should return ServerFailure when delete fails', () async {
       // Arrange
-      when(mockRemoteDataSource.deleteProduct(tProductId))
-          .thenAnswer((_) async => const Left(ServerFailure('An error has occurred')));
+      when(mockRemoteDataSource.deleteProduct(prodcutId)).thenAnswer(
+          (_) async => const Left(ServerFailure('An error has occurred')));
       // Act
-      final result = await repository.deleteProduct(tProductId);
+      final result = await repository.deleteProduct(prodcutId);
       // Assert
       expect(result, const Left(ServerFailure('An error has occurred')));
-      verify(mockRemoteDataSource.deleteProduct(tProductId));
+      verify(mockRemoteDataSource.deleteProduct(prodcutId));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
   });
 
-  group('getProduct', () {
+  group('geproduct', () {
     test('should return a Product when get is successful', () async {
       // Arrange
-      when(mockRemoteDataSource.getProduct(tProductId))
-          .thenAnswer((_) async => Right(tProductModel));
+      when(mockRemoteDataSource.getProduct(prodcutId))
+          .thenAnswer((_) async => Right(productModel));
       // Act
-      final result = await repository.getProduct(tProductId);
+      final result = await repository.getProduct(prodcutId);
       // Assert
-      expect(result, const Right(tProduct));
-      verify(mockRemoteDataSource.getProduct(tProductId));
+      expect(result, const Right(product));
+      verify(mockRemoteDataSource.getProduct(prodcutId));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
 
     test('should return ServerFailure when get fails', () async {
       // Arrange
-      when(mockRemoteDataSource.getProduct(tProductId))
-          .thenAnswer((_) async => const Left(ServerFailure('An error has occurred')));
+      when(mockRemoteDataSource.getProduct(prodcutId)).thenAnswer(
+          (_) async => const Left(ServerFailure('An error has occurred')));
       // Act
-      final result = await repository.getProduct(tProductId);
+      final result = await repository.getProduct(prodcutId);
       // Assert
       expect(result, const Left(ServerFailure('An error has occurred')));
-      verify(mockRemoteDataSource.getProduct(tProductId));
+      verify(mockRemoteDataSource.getProduct(prodcutId));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
   });
 
-  group('insertProduct', () {
+  group('inserproduct', () {
     test('should return Right when insert is successful', () async {
       // Arrange
-      when(mockRemoteDataSource.insertProduct(tProductModel))
+      when(mockRemoteDataSource.insertProduct(productModel))
           .thenAnswer((_) async => const Right(null));
       // Act
-      final result = await repository.insertProduct(tProduct);
+      final result = await repository.insertProduct(product);
       // Assert
       expect(result, const Right(null));
-      verify(mockRemoteDataSource.insertProduct(tProductModel));
+      verify(mockRemoteDataSource.insertProduct(productModel));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
 
     test('should return ServerFailure when insert fails', () async {
       // Arrange
-      when(mockRemoteDataSource.insertProduct(tProductModel))
-          .thenAnswer((_) async => const Left(ServerFailure('An error has occurred')));
+      when(mockRemoteDataSource.insertProduct(productModel)).thenAnswer(
+          (_) async => const Left(ServerFailure('An error has occurred')));
       // Act
-      final result = await repository.insertProduct(tProduct);
+      final result = await repository.insertProduct(product);
       // Assert
       expect(result, const Left(ServerFailure('An error has occurred')));
-      verify(mockRemoteDataSource.insertProduct(tProductModel));
+      verify(mockRemoteDataSource.insertProduct(productModel));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
   });
@@ -111,46 +113,47 @@ void main() {
   group('updateProduct', () {
     test('should return Right when update is successful', () async {
       // Arrange
-      when(mockRemoteDataSource.updateProduct(tProductModel))
+      when(mockRemoteDataSource.updateProduct(productModel))
           .thenAnswer((_) async => const Right(null));
       // Act
-      final result = await repository.updateProduct(tProduct);
+      final result = await repository.updateProduct(product);
       // Assert
       expect(result, const Right(null));
-      verify(mockRemoteDataSource.updateProduct(tProductModel));
+      verify(mockRemoteDataSource.updateProduct(productModel));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
 
     test('should return ServerFailure when update fails', () async {
       // Arrange
-      when(mockRemoteDataSource.updateProduct(tProductModel))
-          .thenAnswer((_) async => const Left(ServerFailure('An error has occurred')));
+      when(mockRemoteDataSource.updateProduct(productModel)).thenAnswer(
+          (_) async => const Left(ServerFailure('An error has occurred')));
       // Act
-      final result = await repository.updateProduct(tProduct);
+      final result = await repository.updateProduct(product);
       // Assert
       expect(result, const Left(ServerFailure('An error has occurred')));
-      verify(mockRemoteDataSource.updateProduct(tProductModel));
+      verify(mockRemoteDataSource.updateProduct(productModel));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
   });
 
   group('getAllProducts', () {
-    test('should return a list of Products when getAll is successful', () async {
+    test('should return a list of Products when getAll is successful',
+        () async {
       // Arrange
       when(mockRemoteDataSource.getAllProducts())
-          .thenAnswer((_) async => Right(tProductModelList));
+          .thenAnswer((_) async => Right(productModelList));
       // Act
       final result = await repository.getAllProducts();
       // Assert
-      expect(result, Right(tProductList));
+      expect(result, Right(productList));
       verify(mockRemoteDataSource.getAllProducts());
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
 
     test('should return ServerFailure when getAll fails', () async {
       // Arrange
-      when(mockRemoteDataSource.getAllProducts())
-          .thenAnswer((_) async => const Left(ServerFailure('An error has occurred')));
+      when(mockRemoteDataSource.getAllProducts()).thenAnswer(
+          (_) async => const Left(ServerFailure('An error has occurred')));
       // Act
       final result = await repository.getAllProducts();
       // Assert
