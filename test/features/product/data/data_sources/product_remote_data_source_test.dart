@@ -27,7 +27,7 @@ void main() {
   group('getProduct', () {
     test('should return a ProductModel when the API call is successful', () async {
       // arrange
-      final response = readJson('product_response.json');
+      final response = readJson('helpers/dummy_data/product_response.json');
       when(mockHttpClient.get(Uri.parse(Urls.getProduct(productId))))
           .thenAnswer((_) async => http.Response(response, 200));
       

@@ -21,21 +21,23 @@ void main() {
     'imageUrl': 'imageUrl',
   };
 
-  test('should be a subclass of product entity', () async {
-    // assert
-    expect(testProductModel, isA<Product>());
-  });
+  group('ProductModel', () {
+    test('should be a subclass of product entity', () async {
+      // assert
+      expect(testProductModel, isA<Product>());
+    });
 
-  test('should correctly convert to json', () async {
-    // assert
-    final result = testProductModel.toJson();
-    expect(result, testJson);
-  });
+    test('should correctly convert to json', () async {
+      // assert
+      final result = testProductModel.toJson();
+      expect(result, testJson);
+    });
 
-  test('should correctly convert from json', () async {
-    // assert
-    final Map<String, dynamic> jsonMap = testJson;
-    final result = ProductModel.fromJson(jsonMap);
-    expect(result, testProductModel);
+    test('should correctly convert from json', () async {
+      // assert
+      final Map<String, dynamic> jsonMap = testJson;
+      final result = ProductModel.fromJson(jsonMap);
+      expect(result, testProductModel);
+    });
   });
 }
