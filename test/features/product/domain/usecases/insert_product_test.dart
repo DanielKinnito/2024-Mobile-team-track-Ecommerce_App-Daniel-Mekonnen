@@ -19,12 +19,10 @@ void main(){
 
   var product = const Product(
     id: '1',
-    category: 'Men\'s Shoes',
     imageUrl: 'assets/images/leather_shoe_1.jpg',
     name: 'Leather Shoe',
     description: 'lorem posum',
     price: 100.0,
-    sizes: [39, 40, 41],
   );
   
   test('should add/insert a product from the repository', () async {

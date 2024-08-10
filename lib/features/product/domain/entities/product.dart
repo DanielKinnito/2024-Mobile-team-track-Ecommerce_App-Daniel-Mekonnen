@@ -1,13 +1,14 @@
 import 'package:equatable/equatable.dart';
 
+/// Represents a product in the e-commerce app.
+///
+/// Each product has an image URL, ID, name, description, and price.
 class Product extends Equatable{
   final String imageUrl;
   final String id;
   final String name;
   final String description;
   final double price;
-  final String? category;
-  final List? sizes;
 
   const Product({
     required this.imageUrl,
@@ -15,19 +16,15 @@ class Product extends Equatable{
     required this.name,
     required this.description,
     required this.price,
-    this.category,
-    this.sizes,
   });
   
   @override
   // TODO: implement props
-  List<Object?> get props =>[
+  List<Object?> get props => [
     imageUrl,
     id,
     name,
     description,
     price,
-    category,
-    sizes,
   ];
 }

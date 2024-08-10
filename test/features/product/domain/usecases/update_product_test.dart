@@ -23,8 +23,6 @@ void main(){
     imageUrl: 'assets/images/leather_shoe_1.jpg',
     name: 'Leather Shoe',
     price: 100.0,
-    sizes: [39, 40, 41],
-    category: 'Men\'s Shoes'
   );
 
   test('Should update product from the repository', () async {

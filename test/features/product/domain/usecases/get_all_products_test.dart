@@ -19,21 +19,17 @@ void main() {
   const productList = [
     Product(
       id: '1',
-      category: 'Men\'s Shoes',
       imageUrl: 'assets/images/leather_shoe_1.jpg',
       name: 'Leather Shoe',
       description: 'lorem posum',
       price: 100.0,
-      sizes: [39, 40, 41],
     ),
     Product(
       id: '2',
-      category: 'Women\'s Shoes',
       imageUrl: 'assets/images/leather_shoe_2.jpg',
       name: 'Leather Shoe',
       description: 'lorem posum',
       price: 100.0,
-      sizes: [39, 40, 41],
     ),
   ];
 
