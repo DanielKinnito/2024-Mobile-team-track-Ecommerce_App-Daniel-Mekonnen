@@ -10,7 +10,6 @@ import 'package:myapp/features/product/data/models/product_model.dart';
 import 'package:myapp/features/product/data/repositories/product_repository_impl.dart';
 import 'package:myapp/features/product/domain/entities/product.dart';
 
-// Ensure your mock classes are imported
 
 class MockProductRemoteDataSource extends Mock implements ProductRemoteDataSource {}
 class MockProductLocalDataSource extends Mock implements ProductLocalDataSource {}
@@ -52,12 +51,11 @@ void main() {
     test('should return product from local data source when internet is connected', () async {
       // arrange
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      when(mockLocalDataSource.getCachedProduct(tProduct.id))
-          .thenAnswer((_) async => tProductModel);
+      when(mockLocalDataSource.getCachedProduct(tProduct.id)).thenAnswer((_) async => tProductModel);
       // act
       final result = await repository.getProduct(tProduct.id);
       // assert
-      expect(result, const Right(tProduct));
+      expect(result, equals(Right(tProduct)));
       verify(mockLocalDataSource.getCachedProduct(tProduct.id));
       verifyNoMoreInteractions(mockLocalDataSource);
     });
@@ -66,12 +64,11 @@ void main() {
       // arrange
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
       when(mockLocalDataSource.getCachedProduct(tProduct.id)).thenThrow(CacheException());
-      when(mockRemoteDataSource.getProduct(tProduct.id))
-          .thenAnswer((_) async => tProductModel);
+      when(mockRemoteDataSource.getProduct(tProduct.id)).thenAnswer((_) async => tProductModel);
       // act
       final result = await repository.getProduct(tProduct.id);
       // assert
-      expect(result, const Right(tProduct));
+      expect(result, equals(Right(tProduct)));
       verify(mockRemoteDataSource.getProduct(tProduct.id));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -80,12 +77,11 @@ void main() {
       // arrange
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
       when(mockLocalDataSource.getCachedProduct(tProduct.id)).thenThrow(CacheException());
-      when(mockRemoteDataSource.getProduct(tProduct.id))
-          .thenThrow(ServerException());
+      when(mockRemoteDataSource.getProduct(tProduct.id)).thenThrow(ServerException());
       // act
       final result = await repository.getProduct(tProduct.id);
       // assert
-      expect(result, const Left(ServerFailure('Server error')));
+      expect(result, equals(Left(ServerFailure('Server error'))));
       verify(mockRemoteDataSource.getProduct(tProduct.id));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -96,7 +92,7 @@ void main() {
       // act
       final result = await repository.getProduct(tProduct.id);
       // assert
-      expect(result, const Left(ConnectionFailure('No Internet Connection')));
+      expect(result, equals(Left(ConnectionFailure('No Internet Connection'))));
       verifyZeroInteractions(mockRemoteDataSource);
       verifyZeroInteractions(mockLocalDataSource);
     });
@@ -110,7 +106,7 @@ void main() {
       // act
       final result = await repository.insertProduct(tProduct);
       // assert
-      expect(result, const Right(tProduct));
+      expect(result, equals(Right(tProduct)));
       verify(mockRemoteDataSource.insertProduct(tProductModel));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -118,12 +114,11 @@ void main() {
     test('should return failure when the remote data source fails', () async {
       // arrange
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      when(mockRemoteDataSource.insertProduct(tProductModel))
-          .thenThrow(ServerException());
+      when(mockRemoteDataSource.insertProduct(tProductModel)).thenThrow(ServerException());
       // act
       final result = await repository.insertProduct(tProduct);
       // assert
-      expect(result, const Left(ServerFailure('Server error')));
+      expect(result, equals(Left(ServerFailure('Server error'))));
       verify(mockRemoteDataSource.insertProduct(tProductModel));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -134,7 +129,7 @@ void main() {
       // act
       final result = await repository.insertProduct(tProduct);
       // assert
-      expect(result, const Left(ConnectionFailure('No Internet Connection')));
+      expect(result, equals(Left(ConnectionFailure('No Internet Connection'))));
       verifyZeroInteractions(mockRemoteDataSource);
     });
   });
@@ -147,7 +142,7 @@ void main() {
       // act
       final result = await repository.updateProduct(tProduct);
       // assert
-      expect(result, const Right(tProduct));
+      expect(result, equals(Right(tProduct)));
       verify(mockRemoteDataSource.updateProduct(tProductModel));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -155,12 +150,11 @@ void main() {
     test('should return failure when the remote data source fails', () async {
       // arrange
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      when(mockRemoteDataSource.updateProduct(tProductModel))
-          .thenThrow(ServerException());
+      when(mockRemoteDataSource.updateProduct(tProductModel)).thenThrow(ServerException());
       // act
       final result = await repository.updateProduct(tProduct);
       // assert
-      expect(result, const Left(ServerFailure('Server error')));
+      expect(result, equals(Left(ServerFailure('Server error'))));
       verify(mockRemoteDataSource.updateProduct(tProductModel));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -171,7 +165,7 @@ void main() {
       // act
       final result = await repository.updateProduct(tProduct);
       // assert
-      expect(result, const Left(ConnectionFailure('No Internet Connection')));
+      expect(result, equals(Left(ConnectionFailure('No Internet Connection'))));
       verifyZeroInteractions(mockRemoteDataSource);
     });
   });
@@ -180,12 +174,11 @@ void main() {
     test('should return success message when the remote data source is successful', () async {
       // arrange
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      when(mockRemoteDataSource.deleteProduct(tProduct.id))
-          .thenAnswer((_) async => 'Product deleted successfully');
+      when(mockRemoteDataSource.deleteProduct(tProduct.id)).thenAnswer((_) async => 'Product deleted successfully');
       // act
       final result = await repository.deleteProduct(tProduct.id);
       // assert
-      expect(result, const Right('Product deleted successfully'));
+      expect(result, equals(Right('Product deleted successfully')));
       verify(mockRemoteDataSource.deleteProduct(tProduct.id));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -193,12 +186,11 @@ void main() {
     test('should return failure when the remote data source fails', () async {
       // arrange
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      when(mockRemoteDataSource.deleteProduct(tProduct.id))
-          .thenThrow(ServerException());
+      when(mockRemoteDataSource.deleteProduct(tProduct.id)).thenThrow(ServerException());
       // act
       final result = await repository.deleteProduct(tProduct.id);
       // assert
-      expect(result, const Left(ServerFailure('Server error')));
+      expect(result, equals(Left(ServerFailure('Server error'))));
       verify(mockRemoteDataSource.deleteProduct(tProduct.id));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -209,7 +201,7 @@ void main() {
       // act
       final result = await repository.deleteProduct(tProduct.id);
       // assert
-      expect(result, const Left(ConnectionFailure('No Internet Connection')));
+      expect(result, equals(Left(ConnectionFailure('No Internet Connection'))));
       verifyZeroInteractions(mockRemoteDataSource);
     });
   });
