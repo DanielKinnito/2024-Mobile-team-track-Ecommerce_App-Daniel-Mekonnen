@@ -24,7 +24,8 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     final response = await client.get(Uri.parse(Urls.getAllProducts()));
 
     if (response.statusCode == 200) {
-      final List<dynamic> productsJson = json.decode(response.body);
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> productsJson = data['data']; // Ensure this is a list
       return productsJson.map((json) => ProductModel.fromJson(json)).toList();
     } else {
       throw ServerException();

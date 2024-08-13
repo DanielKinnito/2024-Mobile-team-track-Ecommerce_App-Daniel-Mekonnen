@@ -1,17 +1,24 @@
-import 'package:equatable/equatable.dart';
 import '../../../../core/exception/exception.dart';
 import '../../domain/entities/product.dart';
 
 /// Data model class representing a product.
 ///
-/// This class is responsible for converting between [Product] entity and JSON, 
-/// which is used for serialization and deserialization when interacting with 
+/// This class is responsible for converting between [Product] entity and JSON,
+/// which is used for serialization and deserialization when interacting with
 /// data sources.
-class ProductModel extends Equatable {
+class ProductModel extends Product {
+  /// The unique identifier of the product.
   final String id;
+
+  /// The name of the product.
   final String name;
+
+  /// A description of the product.
   final String description;
+
+  /// The price of the product.
   final double price;
+  @override
   final String imageUrl;
 
   /// Constructs a new [ProductModel].
@@ -23,7 +30,7 @@ class ProductModel extends Equatable {
     required this.description,
     required this.price,
     required this.imageUrl,
-  });
+  }) : super(imageUrl: '', id: '', name: '', description: '', price: 0.0);
 
   /// Converts this [ProductModel] into a [Product] entity.
   Product toEntity() {

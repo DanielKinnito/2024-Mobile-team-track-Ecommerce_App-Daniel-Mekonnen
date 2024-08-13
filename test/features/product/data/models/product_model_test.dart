@@ -4,28 +4,29 @@ import 'package:myapp/features/product/domain/entities/product.dart';
 
 void main() {
   // create a test instance of ProductModel
-  var testProductModel = const ProductModel(
-    id: 'id',
-    name: 'name',
-    description: 'description',
-    price: 200.0,
-    imageUrl: 'imageUrl',
+  const testProductModel= ProductModel(
+    id: '6672752cbd218790438efdb0',
+    name: 'Anime website',
+    description: 'Explore anime characters.',
+    price: 123.0,
+    imageUrl:
+        'https://res.cloudinary.com/g5-mobile-track/image/upload/v1718777132/images/zxjhzrflkvsjutgbmr0f.jpg',
   );
 
   // test instance of ProductModel
   final testJson = {
-    'id': 'id',
-    'name': 'name',
-    'description': 'description',
-    'price': 200.0,
-    'imageUrl': 'imageUrl',
+    'id': '6672752cbd218790438efdb0',
+    'name': 'Anime website',
+    'description': 'Explore anime characters.',
+    'price': 123.0,
+    'imageUrl': 'https://res.cloudinary.com/g5-mobile-track/image/upload/v1718777132/images/zxjhzrflkvsjutgbmr0f.jpg',
   };
 
   group('ProductModel', () {
-    test('should be a subclass of product entity', () async {
-      // assert
-      expect(testProductModel, isA<Product>());
-    });
+    test('should be a subclass of Product entity', () async {
+    // assert
+    expect(testProductModel, isA<Product>());
+  });
 
     test('should correctly convert to json', () async {
       // assert
