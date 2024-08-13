@@ -9,28 +9,36 @@ import '../models/product_model.dart';
 abstract class ProductLocalDataSource {
   Future<List<ProductModel>> getAllProducts();
   Future<ProductModel> getProduct(String id);
-  Future<void> insertProduct(ProductModel product);
-  Future<void> updateProduct(ProductModel product);
-  Future<void> deleteProduct(String id);
-  Future<void> cacheProducts(List<ProductModel> products);
-  Future<void> cacheProduct(ProductModel product);
+  Future<ProductModel> insertProduct(ProductModel product);
+  Future<ProductModel> updateProduct(ProductModel product);
+  Future<String> deleteProduct(String id);
+  Future<ProductModel> cacheProducts(List<ProductModel> products);
+  Future<ProductModel> cacheProduct(ProductModel product);
   Future<List<ProductModel>> getLastProducts();
   Future<ProductModel> getCachedProduct(String id);
 }
 
-const cachedProductsKey = 'CACHED_PRODUCTS';
-
+/// A data source for handling local operations related to products.
+///
+/// This class uses `SharedPreferences` to store and retrieve products locally.
 class ProductLocalDataSourceImpl implements ProductLocalDataSource {
   final SharedPreferences sharedPreferences;
 
-  ProductLocalDataSourceImpl(this.sharedPreferences);
+  ProductLocalDataSourceImpl({required this.sharedPreferences});
 
   @override
   Future<List<ProductModel>> getAllProducts() async {
-    final jsonString = sharedPreferences.getString(cachedProductsKey);
+    final jsonString = sharedPreferences.getString('products');
     if (jsonString != null) {
-      final List<dynamic> jsonList = json.decode(jsonString);
-      return jsonList.map((json) => ProductModel.fromJson(json)).toList();
+      final List<dynamic> productsJson =
+          json.decode(jsonString)['data'] as List<dynamic>;
+      return productsJson.map((dynamic json) {
+        if (json is Map<String, dynamic>) {
+          return ProductModel.fromJson(json);
+        } else {
+          throw CacheException(); // Handle unexpected data types
+        }
+      }).toList();
     } else {
       throw CacheException();
     }
@@ -38,15 +46,14 @@ class ProductLocalDataSourceImpl implements ProductLocalDataSource {
 
   @override
   Future<ProductModel> getProduct(String id) async {
-    final jsonString = sharedPreferences.getString(cachedProductsKey);
+    final jsonString = sharedPreferences.getString('product_$id');
     if (jsonString != null) {
-      final List<dynamic> jsonList = json.decode(jsonString);
-      final List<ProductModel> products =
-          jsonList.map((json) => ProductModel.fromJson(json)).toList();
       try {
-        return products.firstWhere((product) => product.id == id);
-      } catch (_) {
-        throw CacheException();
+        final Map<String, dynamic> jsonMap =
+            json.decode(jsonString) as Map<String, dynamic>;
+        return ProductModel.fromJson(jsonMap);
+      } catch (e) {
+        throw CacheException(); // Handle JSON parsing errors
       }
     } else {
       throw CacheException();
@@ -54,32 +61,50 @@ class ProductLocalDataSourceImpl implements ProductLocalDataSource {
   }
 
   @override
-  Future<void> insertProduct(ProductModel product) async {
-    final jsonString = sharedPreferences.getString(cachedProductsKey);
-    if (jsonString != null) {
-      final List<dynamic> jsonList = json.decode(jsonString);
-      final List<ProductModel> products =
-          jsonList.map((json) => ProductModel.fromJson(json)).toList();
-      products.add(product);
-      await cacheProducts(products);
+  Future<ProductModel> insertProduct(ProductModel product) async {
+    final jsonString = json.encode(product.toJson());
+    final result =
+        await sharedPreferences.setString('product_${product.id}', jsonString);
+    if (result) {
+      return product;
     } else {
-      await cacheProducts([product]);
+      throw CacheException();
     }
   }
 
   @override
-  Future<void> updateProduct(ProductModel updatedProduct) async {
-    final jsonString = sharedPreferences.getString(cachedProductsKey);
-    if (jsonString != null) {
-      final List<dynamic> jsonList = json.decode(jsonString);
-      final List<ProductModel> products =
-          jsonList.map((json) => ProductModel.fromJson(json)).toList();
-      final index = products.indexWhere((product) => product.id == updatedProduct.id);
-      if (index != -1) {
-        products[index] = updatedProduct;
-        await cacheProducts(products);
+  Future<ProductModel> updateProduct(ProductModel product) async {
+    final jsonString = json.encode(product.toJson());
+    final result =
+        await sharedPreferences.setString('product_${product.id}', jsonString);
+    if (result) {
+      return product;
+    } else {
+      throw CacheException();
+    }
+  }
+
+  @override
+  Future<String> deleteProduct(String id) async {
+    final result = await sharedPreferences.remove('product_$id');
+    if (result) {
+      return 'Product deleted successfully';
+    } else {
+      throw CacheException();
+    }
+  }
+
+  @override
+  Future<ProductModel> cacheProducts(List<ProductModel> products) async {
+    final jsonList = products.map((product) => product.toJson()).toList();
+    final jsonString = json.encode({'data': jsonList});
+    final result = await sharedPreferences.setString('products', jsonString);
+    if (result) {
+      // Return the first product if the list is not empty
+      if (products.isNotEmpty) {
+        return products.first;
       } else {
-        throw CacheException();
+        throw CacheException(); // Handle empty product list
       }
     } else {
       throw CacheException();
@@ -87,48 +112,49 @@ class ProductLocalDataSourceImpl implements ProductLocalDataSource {
   }
 
   @override
-  Future<void> deleteProduct(String id) async {
-    final jsonString = sharedPreferences.getString(cachedProductsKey);
-    if (jsonString != null) {
-      final List<dynamic> jsonList = json.decode(jsonString);
-      final List<ProductModel> products =
-          jsonList.map((json) => ProductModel.fromJson(json)).toList();
-      products.removeWhere((product) => product.id == id);
-      await cacheProducts(products);
+  Future<ProductModel> cacheProduct(ProductModel product) async {
+    final jsonString = json.encode(product.toJson());
+    final result =
+        await sharedPreferences.setString('product_${product.id}', jsonString);
+    if (result) {
+      return product;
     } else {
       throw CacheException();
-    }
-  }
-
-  @override
-  Future<void> cacheProducts(List<ProductModel> products) async {
-    final List<Map<String, dynamic>> jsonList =
-        products.map((product) => product.toJson()).toList();
-    final jsonString = json.encode(jsonList);
-    await sharedPreferences.setString(cachedProductsKey, jsonString);
-  }
-
-  @override
-  Future<void> cacheProduct(ProductModel product) async {
-    final jsonString = sharedPreferences.getString(cachedProductsKey);
-    if (jsonString != null) {
-      final List<dynamic> jsonList = json.decode(jsonString);
-      final List<ProductModel> products =
-          jsonList.map((json) => ProductModel.fromJson(json)).toList();
-      products.add(product);
-      await cacheProducts(products);
-    } else {
-      await cacheProducts([product]);
     }
   }
 
   @override
   Future<List<ProductModel>> getLastProducts() async {
-    return await getAllProducts();
+    // Assuming this is similar to getAllProducts
+    final jsonString = sharedPreferences.getString('products');
+    if (jsonString != null) {
+      final List<dynamic> productsJson =
+          json.decode(jsonString)['data'] as List<dynamic>;
+      return productsJson.map((dynamic json) {
+        if (json is Map<String, dynamic>) {
+          return ProductModel.fromJson(json);
+        } else {
+          throw CacheException(); // Handle unexpected data types
+        }
+      }).toList();
+    } else {
+      throw CacheException();
+    }
   }
 
   @override
   Future<ProductModel> getCachedProduct(String id) async {
-    return await getProduct(id);
+    final jsonString = sharedPreferences.getString('product_$id');
+    if (jsonString != null) {
+      try {
+        final Map<String, dynamic> jsonMap =
+            json.decode(jsonString) as Map<String, dynamic>;
+        return ProductModel.fromJson(jsonMap);
+      } catch (e) {
+        throw CacheException(); // Handle JSON parsing errors
+      }
+    } else {
+      throw CacheException();
+    }
   }
 }

@@ -6,45 +6,51 @@ import 'package:myapp/features/product/domain/entities/product.dart';
 import 'package:myapp/features/product/domain/repositories/product_repository.dart';
 import 'package:myapp/features/product/domain/usecases/update_product.dart';
 
-import 'insert_product_test.mocks.dart';
+import '../../helpers/mocks.mocks.dart';
 
-void main(){
-  late ProductRepository productRepository;
+
+void main() {
   late UpdateProduct usecase;
+  late ProductRepository productRepository;
 
-  setUp((){
+  setUp(() {
     productRepository = MockProductRepository();
     usecase = UpdateProduct(productRepository);
   });
 
-  var  product = const Product(
+  const product = Product(
     id: '1',
-    description: 'lorem posum',
     imageUrl: 'assets/images/leather_shoe_1.jpg',
     name: 'Leather Shoe',
+    description: 'lorem posum',
     price: 100.0,
   );
 
-  test('Should update product from the repository', () async {
+  test(
+    'should update a product in the repository',
+    () async {
       // arrange
-      when(productRepository.updateProduct(product)).thenAnswer((_) async => Right(product));
+      when(productRepository.updateProduct(product)).thenAnswer((_) async => const Right(product));
       // act
       final result = await usecase(product);
       // assert
-      expect(result, Right(product));
+      expect(result, equals(const Right(product)));
+      verify(productRepository.updateProduct(product));
+      verifyNoMoreInteractions(productRepository);
+    },
+  );
+
+  test(
+    'should return a failure when update fails',
+    () async {
+      // arrange
+      when(productRepository.updateProduct(product)).thenAnswer((_) async => const Left(DatabaseFailure('Update failed')));
+      // act
+      final result = await usecase(product);
+      // assert
+      expect(result, equals(const Left(DatabaseFailure('Update failed'))));
       verify(productRepository.updateProduct(product)).called(1);
       verifyNoMoreInteractions(productRepository);
-  });
-
-    test('should return a Failure when the product is not in the repository', () async {
-    // arrange
-    when(productRepository.updateProduct(product)).thenAnswer((_) async => const Left(DatabaseFailure('Failed to update product')));
-    // act
-    final result = await usecase(product);
-    // assert
-    expect(result, const Left(DatabaseFailure('Failed to update product')));
-    verify(productRepository.updateProduct(product)).called(1);
-    verifyNoMoreInteractions(productRepository);
-  });
-  
+    },
+  );
 }

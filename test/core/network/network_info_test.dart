@@ -18,17 +18,20 @@ void main() {
 
   test('should forward the call to InternetConnectionChecker.hasConnection',
       () async {
-    final tHasConnectionFuture = Future.value(true);
+    const tHasConnection = true;
     // arrange
     when(mockInternetConnectionChecker.hasConnection)
-        .thenAnswer((_) => tHasConnectionFuture);
+        .thenAnswer((_) async => tHasConnection);
+
     // act
-    final result = networkInfoImpl.isConnected;
+    final result = await networkInfoImpl.isConnected; // await the result
+
     // assert
-    expect(result, tHasConnectionFuture);
+    expect(result, tHasConnection); // compare the boolean value
     verify(mockInternetConnectionChecker.hasConnection);
     verifyNoMoreInteractions(mockInternetConnectionChecker);
   });
+  ;
 
   test('should return false when there is no connection', () async {
     final tHasNoConnectionFuture = Future.value(false);

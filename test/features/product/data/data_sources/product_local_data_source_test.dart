@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:myapp/core/exception/exception.dart';
@@ -11,40 +12,46 @@ void main() {
   late ProductLocalDataSourceImpl dataSource;
   late MockSharedPreferences mockSharedPreferences;
 
-  const cachedProductsKey = 'CACHED_PRODUCTS';
-
   setUp(() {
     mockSharedPreferences = MockSharedPreferences();
-    dataSource = ProductLocalDataSourceImpl(mockSharedPreferences);
+    dataSource = ProductLocalDataSourceImpl(sharedPreferences: mockSharedPreferences);
   });
 
-  group('getAllProducts', () {
-    final tProductList = [
-      const ProductModel(
-        id: '6672752cbd218790438efdb0',
-        name: 'Anime website',
-        description: 'Explore anime characters.',
-        price: 123,
-        imageUrl:
-            'https://res.cloudinary.com/g5-mobile-track/image/upload/v1718777132/images/zxjhzrflkvsjutgbmr0f.jpg',
-      ),
-      // Additional products...
-    ];
+  const tProduct = ProductModel(
+    id: '6672752cbd218790438efdb0',
+    name: 'Anime website',
+    description: 'Explore anime characters.',
+    price: 123,
+    imageUrl:
+        'https://res.cloudinary.com/g5-mobile-track/image/upload/v1718777132/images/zxjhzrflkvsjutgbmr0f.jpg',
+  );
 
-    test('should return List<ProductModel> when there is cached data',
-        () async {
+  final tProductJson = jsonEncode(tProduct.toJson());
+
+  final tProductList = [
+    tProduct,
+    // Additional products...
+  ];
+
+  final tProductListJson = jsonEncode(
+    {'data': tProductList.map<Map<String, dynamic>>((product) => product.toJson()).toList()},
+  );
+
+  group('getAllProducts', () {
+    test('should return List<ProductModel> when data is cached', () async {
       // arrange
-      when(mockSharedPreferences.getString(cachedProductsKey)).thenReturn(json
-          .encode(tProductList.map((product) => product.toJson()).toList()));
+      when(mockSharedPreferences.getString('products'))
+          .thenReturn(tProductListJson);
       // act
       final result = await dataSource.getAllProducts();
       // assert
       expect(result, equals(tProductList));
     });
 
-    test('should throw CacheException when there is no cached data', () async {
+    test('should throw CacheException when no data is cached', () async {
       // arrange
-      when(mockSharedPreferences.getString(cachedProductsKey)).thenReturn(null);
+      when(mockSharedPreferences.getString('products'))
+          .thenReturn(null);
       // act
       final call = dataSource.getAllProducts;
       // assert
@@ -53,30 +60,20 @@ void main() {
   });
 
   group('getProduct', () {
-    const tProduct = ProductModel(
-      id: '6672752cbd218790438efdb0',
-      name: 'Anime website',
-      description: 'Explore anime characters.',
-      price: 123,
-      imageUrl:
-          'https://res.cloudinary.com/g5-mobile-track/image/upload/v1718777132/images/zxjhzrflkvsjutgbmr0f.jpg',
-    );
-
-    test('should return ProductModel when product exists in cache', () async {
+    test('should return ProductModel when data is cached', () async {
       // arrange
-      when(mockSharedPreferences.getString(cachedProductsKey))
-          .thenReturn(json.encode([tProduct.toJson()]));
+      when(mockSharedPreferences.getString('product_${tProduct.id}'))
+          .thenReturn(tProductJson);
       // act
       final result = await dataSource.getProduct(tProduct.id);
       // assert
       expect(result, equals(tProduct));
     });
 
-    test('should throw CacheException when product is not found in cache',
-        () async {
+    test('should throw CacheException when no data is cached', () async {
       // arrange
-      when(mockSharedPreferences.getString(cachedProductsKey))
-          .thenReturn(json.encode([]));
+      when(mockSharedPreferences.getString('product_${tProduct.id}'))
+          .thenReturn(null);
       // act
       final call = dataSource.getProduct;
       // assert
@@ -85,64 +82,42 @@ void main() {
   });
 
   group('insertProduct', () {
-    const tProduct = ProductModel(
-      id: '6672752cbd218790438efdb0',
-      name: 'Anime website',
-      description: 'Explore anime characters.',
-      price: 123,
-      imageUrl:
-          'https://res.cloudinary.com/g5-mobile-track/image/upload/v1718777132/images/zxjhzrflkvsjutgbmr0f.jpg',
-    );
-
-    test('should call SharedPreferences to cache the data', () async {
+    test('should return ProductModel when product is inserted', () async {
       // arrange
-      when(mockSharedPreferences.getString(cachedProductsKey))
-          .thenReturn(json.encode([]));
-      when(mockSharedPreferences.setString(
-        cachedProductsKey,
-        json.encode([tProduct.toJson()]),
-      )).thenAnswer((_) async => true);
+      when(mockSharedPreferences.setString('product_${tProduct.id}', tProductJson))
+          .thenAnswer((_) async => true);
       // act
-      await dataSource.insertProduct(tProduct);
+      final result = await dataSource.insertProduct(tProduct);
       // assert
-      verify(mockSharedPreferences.setString(
-        cachedProductsKey,
-        json.encode([tProduct.toJson()]),
-      ));
+      expect(result, equals(tProduct));
+    });
+
+    test('should throw CacheException when insertion fails', () async {
+      // arrange
+      when(mockSharedPreferences.setString('product_${tProduct.id}', tProductJson))
+          .thenAnswer((_) async => false);
+      // act
+      final call = dataSource.insertProduct;
+      // assert
+      expect(() => call(tProduct), throwsA(isA<CacheException>()));
     });
   });
 
   group('updateProduct', () {
-    const tProduct = ProductModel(
-      id: '6672752cbd218790438efdb0',
-      name: 'Anime website',
-      description: 'Explore anime characters.',
-      price: 123,
-      imageUrl:
-          'https://res.cloudinary.com/g5-mobile-track/image/upload/v1718777132/images/zxjhzrflkvsjutgbmr0f.jpg',
-    );
-
-    test('should update the cached product data', () async {
+    test('should return ProductModel when product is updated', () async {
       // arrange
-      when(mockSharedPreferences.getString(cachedProductsKey))
-          .thenReturn(json.encode([tProduct.toJson()]));
-      when(mockSharedPreferences.setString(
-        cachedProductsKey,
-        json.encode([tProduct.toJson()]),
-      )).thenAnswer((_) async => true);
+      when(mockSharedPreferences.setString('product_${tProduct.id}', tProductJson))
+          .thenAnswer((_) async => true);
       // act
-      await dataSource.updateProduct(tProduct);
+      final result = await dataSource.updateProduct(tProduct);
       // assert
-      verify(mockSharedPreferences.setString(
-        cachedProductsKey,
-        json.encode([tProduct.toJson()]),
-      ));
+      expect(result, equals(tProduct));
     });
 
-    test('should throw CacheException if product to be updated is not found',
-        () async {
+    test('should throw CacheException when update fails', () async {
       // arrange
-      when(mockSharedPreferences.getString(cachedProductsKey)).thenReturn(null);
+      when(mockSharedPreferences.setString('product_${tProduct.id}', tProductJson))
+          .thenAnswer((_) async => false);
       // act
       final call = dataSource.updateProduct;
       // assert
@@ -151,74 +126,112 @@ void main() {
   });
 
   group('deleteProduct', () {
-    const tProductId = '6672752cbd218790438efdb0';
-    const tProductList = [
-      ProductModel(
-        id: tProductId,
-        name: 'Anime website',
-        description: 'Explore anime characters.',
-        price: 123,
-        imageUrl:
-            'https://res.cloudinary.com/g5-mobile-track/image/upload/v1718777132/images/zxjhzrflkvsjutgbmr0f.jpg',
-      ),
-    ];
-
-    test('should delete the product from cache', () async {
+    test('should return String when product is deleted', () async {
       // arrange
-      when(mockSharedPreferences.getString(cachedProductsKey)).thenReturn(json
-          .encode(tProductList.map((product) => product.toJson()).toList()));
-      when(mockSharedPreferences.setString(
-        cachedProductsKey,
-        json.encode([]),
-      )).thenAnswer((_) async => true);
+      when(mockSharedPreferences.remove('product_${tProduct.id}'))
+          .thenAnswer((_) async => true);
       // act
-      await dataSource.deleteProduct(tProductId);
+      final result = await dataSource.deleteProduct(tProduct.id);
       // assert
-      verify(mockSharedPreferences.setString(
-        cachedProductsKey,
-        json.encode([]),
-      ));
+      expect(result, equals('Product deleted successfully'));
     });
 
-    test('should throw CacheException if product to be deleted is not found',
-        () async {
+    test('should throw CacheException when deletion fails', () async {
       // arrange
-      when(mockSharedPreferences.getString(cachedProductsKey)).thenReturn(null);
+      when(mockSharedPreferences.remove('product_${tProduct.id}'))
+          .thenAnswer((_) async => false);
       // act
       final call = dataSource.deleteProduct;
       // assert
-      expect(() => call(tProductId), throwsA(isA<CacheException>()));
+      expect(() => call(tProduct.id), throwsA(isA<CacheException>()));
     });
   });
 
   group('cacheProducts', () {
-    const tProductList = [
-      ProductModel(
-        id: '6672752cbd218790438efdb0',
-        name: 'Anime website',
-        description: 'Explore anime characters.',
-        price: 123,
-        imageUrl:
-            'https://res.cloudinary.com/g5-mobile-track/image/upload/v1718777132/images/zxjhzrflkvsjutgbmr0f.jpg',
-      ),
-      // Additional products...
-    ];
-
-    test('should call SharedPreferences to cache the data', () async {
+    test('should return the first ProductModel when caching succeeds', () async {
       // arrange
-      when(mockSharedPreferences.setString(
-        cachedProductsKey,
-        json.encode(tProductList.map((product) => product.toJson()).toList()),
-      )).thenAnswer((_) async => true);
-
+      when(mockSharedPreferences.setString('products', tProductListJson))
+          .thenAnswer((_) async => true);
       // act
-      await dataSource.cacheProducts(tProductList);
-
+      final result = await dataSource.cacheProducts(tProductList);
       // assert
-      verify(mockSharedPreferences.setString(
-        cachedProductsKey,
-        json.encode(tProductList.map((product) => product.toJson()).toList()),
-      ));
+      expect(result, equals(tProduct));
+    });
+
+    test('should throw CacheException when caching fails', () async {
+      // arrange
+      when(mockSharedPreferences.setString('products', tProductListJson))
+          .thenAnswer((_) async => false);
+      // act
+      final call = dataSource.cacheProducts;
+      // assert
+      expect(() => call(tProductList), throwsA(isA<CacheException>()));
+    });
+  });
+
+  group('cacheProduct', () {
+    test('should return ProductModel when caching succeeds', () async {
+      // arrange
+      when(mockSharedPreferences.setString('product_${tProduct.id}', tProductJson))
+          .thenAnswer((_) async => true);
+      // act
+      final result = await dataSource.cacheProduct(tProduct);
+      // assert
+      expect(result, equals(tProduct));
+    });
+
+    test('should throw CacheException when caching fails', () async {
+      // arrange
+      when(mockSharedPreferences.setString('product_${tProduct.id}', tProductJson))
+          .thenAnswer((_) async => false);
+      // act
+      final call = dataSource.cacheProduct;
+      // assert
+      expect(() => call(tProduct), throwsA(isA<CacheException>()));
+    });
+  });
+
+  group('getLastProducts', () {
+    test('should return List<ProductModel> when data is cached', () async {
+      // arrange
+      when(mockSharedPreferences.getString('products'))
+          .thenReturn(tProductListJson);
+      // act
+      final result = await dataSource.getLastProducts();
+      // assert
+      expect(result, equals(tProductList));
+    });
+
+    test('should throw CacheException when no data is cached', () async {
+      // arrange
+      when(mockSharedPreferences.getString('products'))
+          .thenReturn(null);
+      // act
+      final call = dataSource.getLastProducts;
+      // assert
+      expect(() => call(), throwsA(isA<CacheException>()));
+    });
+  });
+
+  group('getCachedProduct', () {
+    test('should return ProductModel when data is cached', () async {
+      // arrange
+      when(mockSharedPreferences.getString('product_${tProduct.id}'))
+          .thenReturn(tProductJson);
+      // act
+      final result = await dataSource.getCachedProduct(tProduct.id);
+      // assert
+      expect(result, equals(tProduct));
+    });
+
+    test('should throw CacheException when no data is cached', () async {
+      // arrange
+      when(mockSharedPreferences.getString('product_${tProduct.id}'))
+          .thenReturn(null);
+      // act
+      final call = dataSource.getCachedProduct;
+      // assert
+      expect(() => call(tProduct.id), throwsA(isA<CacheException>()));
     });
   });
 }

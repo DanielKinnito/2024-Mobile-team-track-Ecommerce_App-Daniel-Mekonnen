@@ -35,12 +35,12 @@ void main() {
 
   test('should get all products from the repository', () async {
     // arrange
-    when(productRepository.getAllProdcuts()).thenAnswer((_) async => const Right(productList));
+    when(productRepository.getAllProducts()).thenAnswer((_) async => const Right(productList));
     // act
     final result = await getAllProducts();
     // assert
     expect(result, const Right(productList));
-    verify(productRepository.getAllProdcuts());
+    verify(productRepository.getAllProducts());
     verifyNoMoreInteractions(productRepository);
   });
 

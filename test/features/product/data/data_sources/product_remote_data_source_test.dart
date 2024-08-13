@@ -84,17 +84,17 @@ void main() {
   });
 
   group('insertProduct', () {
-    test('should return true when the response code is 201', () async {
+    test('should return ProductModel when the response code is 201', () async {
       // arrange
       when(mockHttpClient.post(
         Uri.parse(Urls.insertProduct()),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(tProduct.toJson()),
-      )).thenAnswer((_) async => http.Response('Created', 201));
+      )).thenAnswer((_) async => http.Response(tProductJson, 201));
       // act
       final result = await dataSource.insertProduct(tProduct);
       // assert
-      expect(result, equals(true));
+      expect(result, equals(tProduct));
     });
 
     test('should throw ServerException when the response code is not 201', () async {
@@ -112,17 +112,17 @@ void main() {
   });
 
   group('updateProduct', () {
-    test('should return true when the response code is 200', () async {
+    test('should return ProductModel when the response code is 200', () async {
       // arrange
       when(mockHttpClient.put(
         Uri.parse(Urls.updateProduct(tProduct.id)),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(tProduct.toJson()),
-      )).thenAnswer((_) async => http.Response('Updated', 200));
+      )).thenAnswer((_) async => http.Response(tProductJson, 200));
       // act
       final result = await dataSource.updateProduct(tProduct);
       // assert
-      expect(result, equals(true));
+      expect(result, equals(tProduct));
     });
 
     test('should throw ServerException when the response code is not 200', () async {
@@ -140,14 +140,14 @@ void main() {
   });
 
   group('deleteProduct', () {
-    test('should return true when the response code is 200', () async {
+    test('should return String when the response code is 200', () async {
       // arrange
       when(mockHttpClient.delete(Uri.parse(Urls.deleteProduct(tProduct.id))))
-          .thenAnswer((_) async => http.Response('Deleted', 200));
+          .thenAnswer((_) async => http.Response('Product deleted successfully', 200));
       // act
       final result = await dataSource.deleteProduct(tProduct.id);
       // assert
-      expect(result, equals(true));
+      expect(result, equals('Product deleted successfully'));
     });
 
     test('should throw ServerException when the response code is not 200', () async {

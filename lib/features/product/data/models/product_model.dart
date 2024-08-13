@@ -71,6 +71,16 @@ class ProductModel extends Product {
     };
   }
 
+  factory ProductModel.fromEntity(Product product) {
+    return ProductModel(
+      id: product.id,
+      imageUrl: product.imageUrl,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+    );
+  }
+
   /// Converts a list of [ProductModel] into a list of [Product] entities.
   static List<Product> toEntityList(List<ProductModel> models) {
     return models.map((model) => model.toEntity()).toList();

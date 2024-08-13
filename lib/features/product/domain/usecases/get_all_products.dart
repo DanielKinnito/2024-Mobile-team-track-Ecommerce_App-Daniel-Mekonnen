@@ -28,6 +28,6 @@ class GetAllProducts
 
   @override
   Future<Either<Failure, List<Product>>> call() async {
-    return await repository.getAllProdcuts();
+    return await repository.getAllProducts();
   }
 }

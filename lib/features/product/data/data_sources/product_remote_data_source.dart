@@ -9,9 +9,9 @@ import '../models/product_model.dart';
 abstract class ProductRemoteDataSource {
   Future<List<ProductModel>> getAllProducts();
   Future<ProductModel> getProduct(String id);
-  Future<bool> insertProduct(ProductModel product);
-  Future<bool> updateProduct(ProductModel product);
-  Future<bool> deleteProduct(String id);
+  Future<ProductModel> insertProduct(ProductModel product);
+  Future<ProductModel> updateProduct(ProductModel product);
+  Future<String> deleteProduct(String id);
 }
 
 class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
@@ -45,7 +45,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   }
 
   @override
-  Future<bool> insertProduct(ProductModel product) async {
+  Future<ProductModel> insertProduct(ProductModel product) async {
     final response = await client.post(
       Uri.parse(Urls.insertProduct()),
       headers: {'Content-Type': 'application/json'},
@@ -53,14 +53,15 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     );
 
     if (response.statusCode == 201) {
-      return true;
+      final Map<String, dynamic> data = json.decode(response.body);
+      return ProductModel.fromJson(data['data']);
     } else {
       throw ServerException();
     }
   }
 
   @override
-  Future<bool> updateProduct(ProductModel product) async {
+  Future<ProductModel> updateProduct(ProductModel product) async {
     final response = await client.put(
       Uri.parse(Urls.updateProduct(product.id)),
       headers: {'Content-Type': 'application/json'},
@@ -68,18 +69,19 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
-      return true;
+      final Map<String, dynamic> data = json.decode(response.body);
+      return ProductModel.fromJson(data['data']);
     } else {
       throw ServerException();
     }
   }
 
   @override
-  Future<bool> deleteProduct(String id) async {
+  Future<String> deleteProduct(String id) async {
     final response = await client.delete(Uri.parse(Urls.deleteProduct(id)));
 
     if (response.statusCode == 200) {
-      return true;
+      return response.body; // Assuming the response body contains a confirmation message
     } else {
       throw ServerException();
     }

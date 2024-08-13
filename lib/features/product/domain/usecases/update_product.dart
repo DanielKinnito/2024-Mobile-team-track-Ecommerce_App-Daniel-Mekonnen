@@ -8,7 +8,7 @@ import '../repositories/product_repository.dart';
 ///
 /// This use case is responsible for updating a product in the system.
 /// It takes a [Product] object as a parameter and returns a [Future] that
-/// resolves to an [Either] containing a [Failure] or `void`.
+/// resolves to an [Either] containing a [Failure] or a [Product].
 ///
 /// Example usage:
 /// ```dart
@@ -16,16 +16,16 @@ import '../repositories/product_repository.dart';
 /// final result = await updateProduct(product);
 /// result.fold(
 ///   (failure) => print('Failed to update product: $failure'),
-///   (_) => print('Product updated successfully'),
+///   (product) => print('Product updated successfully: $product'),
 /// );
 /// ```
-class UpdateProduct extends Usecase<Future<Either<Failure, void>>, Product> {
+class UpdateProduct extends Usecase<Future<Either<Failure, Product>>, Product> {
   final ProductRepository repository;
 
   UpdateProduct(this.repository);
 
   @override
-  Future<Either<Failure, void>> call(Product params) async {
+  Future<Either<Failure, Product>> call(Product params) async {
     return await repository.updateProduct(params);
   }
 }

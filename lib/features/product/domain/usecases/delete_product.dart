@@ -7,7 +7,7 @@ import '../repositories/product_repository.dart';
 ///
 /// This use case is responsible for deleting a product from the repository.
 /// It takes a [String] parameter representing the product ID and returns a [Future] that
-/// resolves to an [Either] containing a [Failure] or [void].
+/// resolves to an [Either] containing a [Failure] or a [String] message.
 ///
 /// Example usage:
 /// ```dart
@@ -15,16 +15,16 @@ import '../repositories/product_repository.dart';
 /// final result = await deleteProduct('product_id');
 /// result.fold(
 ///   (failure) => print('Failed to delete product: $failure'),
-///   (_) => print('Product deleted successfully'),
+///   (message) => print('Product deletion message: $message'),
 /// );
 /// ```
-class DeleteProduct extends Usecase<Future<Either<Failure, void>>, String> {
+class DeleteProduct extends Usecase<Future<Either<Failure, String>>, String> {
   final ProductRepository repository;
 
   DeleteProduct(this.repository);
 
   @override
-  Future<Either<Failure, void>> call(String params) async {
+  Future<Either<Failure, String>> call(String params) async {
     return await repository.deleteProduct(params);
   }
 }
