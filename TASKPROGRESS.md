@@ -7,6 +7,12 @@ A Flutter Mobile Application built for the 2024 A2SV Summer Internship in the mo
 - [Task 8](#task-8)
 - [Task 9](#task-9)
 - [Task 10](#task-10)
+- [Task 11](#task-11)
+- [Task 12](#task-12)
+- [Task 13](#task-13)
+- [Task 14](#task-14)
+- [Task 15](#task-15)
+- [Task 16](#task-16)
 
 ## Task 6
 ### Implementing a Flutter User Interface
@@ -109,3 +115,43 @@ Flutter projects do not come with specific folders like `core` or `features`. Th
 - Update the project documentation to include information about architecture, data flow. ✔️
 - Ensure that the documentation is clear and comprehensive. ✔️
 - Make sure that you write on github readme.md ✔️
+
+## Task 11
+### Contracts of Data Sources
+In this task, you will be applying the concepts learned from the provided learning material to create an Ecommerce app using Flutter. Your app 	will utilize the principles of contracts, repository dependencies, network information, local data sources, and setting up the repository. 
+### Requirements
+- Contract and Repository: ✔️
+  - Implement a contract that defines the methods a repository must  fulfill, similar to the approach described in the learning material. ✔️
+- Create interfaces or abstract classes for repository dependencies, such as remote and local data sources. ✔️
+
+## Task 12
+### Implement Repository
+In this task, you will be applying the concepts learned from the provided learning material to create an Ecommerce app using Flutter. Your app will utilize the principles of contracts, repository dependencies, local data sources, and setting up the repository. 
+### Requirements:
+- Contract and Repository:
+- Set up a basic structure for your repository, and you're implementing all the logic at this stage for the repository contracts from the domain layer. ✔️
+  - Use local datasource when network is unavailable ✔️
+  - Use remote datasource when network is available ✔️
+
+## Task 13
+### Implement Network Info
+The task involves adding enhancements to an existing Ecommerce mobile app. The app currently allows users to manage their tasks by adding, updating, and deleting items from their Ecommerce list. The objective is to introduce additional functionalities such as caching and network connectivity detection that enhance the user experience.
+### Task Features and Enhancements
+- Implement a NetworkInfo class and utilize it within the repository to ascertain the presence or absence of a network connection. ✔️
+
+## Task 14
+### Implement Local Data Source
+In this task, you will be implementing a local datasource for the Ecommerce app. The local datasource will be useful when  the user is not connected to the internet and the app is forced to show cached items. It will be also useful to show temporary items while the app is loading products from a remote server.
+### Requirements:
+- Implement local datasource implementation that implements the ProductLocalDatasource interface(contract)
+Use shared preference to store products locally ✔️
+
+## Task 15
+### Implement Remote Data Source
+In this task, you will be implementing a remote datasource for the Ecommerce app. 
+### Requirements:
+- Implement remote datasource implementation that implements the ProductRemoteDatasource interface(contract) ✔️
+
+## Task 16
+### Improve Code Organization and Reusability
+- In this task, you will enhance the code organization and reusability of the Ecommerce app. By following best practices, you will improve the maintainability and efficiency of the codebase. [In-Progress]
