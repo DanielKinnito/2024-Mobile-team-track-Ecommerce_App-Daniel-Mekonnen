@@ -1,38 +1,59 @@
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:1860087483.
+import 'package:equatable/equatable.dart';
+import '../../../../core/exception/exception.dart';
 import '../../domain/entities/product.dart';
 
-class ProductModel extends Product {
-  /// Constructor for the ProductModel
+/// Data model class representing a product.
+///
+/// This class is responsible for converting between [Product] entity and JSON, 
+/// which is used for serialization and deserialization when interacting with 
+/// data sources.
+class ProductModel extends Equatable {
+  final String id;
+  final String name;
+  final String description;
+  final double price;
+  final String imageUrl;
+
+  /// Constructs a new [ProductModel].
+  ///
+  /// All properties are required.
   const ProductModel({
-    required super.id,
-    required super.name,
-    required super.description,
-    required super.price,
-    required super.imageUrl,
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.imageUrl,
   });
 
-  /// Factory constructor to create a ProductModel from a JSON map
+  /// Converts this [ProductModel] into a [Product] entity.
+  Product toEntity() {
+    return Product(
+      id: id,
+      name: name,
+      description: description,
+      price: price,
+      imageUrl: imageUrl,
+    );
+  }
+
+  /// Creates a new [ProductModel] from a JSON object.
+  ///
+  /// Throws a [ParsingException] if the JSON is invalid.
   factory ProductModel.fromJson(Map<String, dynamic> json) {
-    return ProductModel(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      price: (json['price'] as num?)?.toDouble() ?? 0.0,
-      imageUrl: json['imageUrl'],
-    );
+    try {
+      return ProductModel(
+        id: json['id'] as String,
+        name: json['name'] as String,
+        description: json['description'] as String,
+        price: (json['price'] as num).toDouble(),
+        imageUrl: json['imageUrl'] as String,
+      );
+    } catch (e) {
+      throw ParsingException();
+    }
   }
 
-  factory ProductModel.forLocalJson(Map<String, dynamic> json) {
-    return ProductModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      description: json['description'] as String,
-      price: (json['price'] as num?)?.toDouble() ?? 0.0,
-      imageUrl: json['imageUrl'] as String,
-    );
-  }
-
-  /// Method to convert the ProductModel to a JSON map
+  /// Converts this [ProductModel] into a JSON object.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -43,18 +64,16 @@ class ProductModel extends Product {
     };
   }
 
-  Product toEntity() => Product(
-        id: id,
-        name: name,
-        description: description,
-        price: price,
-        imageUrl: imageUrl,
-      );
-  static ProductModel fromDomain(Product product) => ProductModel(
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        imageUrl: product.imageUrl,
-      );
+  /// Converts a list of [ProductModel] into a list of [Product] entities.
+  static List<Product> toEntityList(List<ProductModel> models) {
+    return models.map((model) => model.toEntity()).toList();
+  }
+
+  /// Converts a list of JSON objects into a list of [ProductModel] instances.
+  static List<ProductModel> fromJsonList(List<dynamic> jsonList) {
+    return jsonList.map((json) => ProductModel.fromJson(json)).toList();
+  }
+
+  @override
+  List<Object> get props => [id, name, description, price, imageUrl];
 }

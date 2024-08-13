@@ -29,4 +29,27 @@ void main() {
     verify(mockInternetConnectionChecker.hasConnection);
     verifyNoMoreInteractions(mockInternetConnectionChecker);
   });
+
+  test('should return false when there is no connection', () async {
+    final tHasNoConnectionFuture = Future.value(false);
+    // arrange
+    when(mockInternetConnectionChecker.hasConnection)
+        .thenAnswer((_) => tHasNoConnectionFuture);
+    // act
+    final result = networkInfoImpl.isConnected;
+    // assert
+    expect(result, tHasNoConnectionFuture);
+    verify(mockInternetConnectionChecker.hasConnection);
+    verifyNoMoreInteractions(mockInternetConnectionChecker);
+  });
+
+  test('should always return a Future<bool>', () async {
+    // arrange
+    when(mockInternetConnectionChecker.hasConnection)
+        .thenAnswer((_) => Future.value(true));
+    // act
+    final result = networkInfoImpl.isConnected;
+    // assert
+    expect(result, isA<Future<bool>>());
+  });
 }

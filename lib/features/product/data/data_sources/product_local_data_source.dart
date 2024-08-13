@@ -1,131 +1,134 @@
 import 'dart:convert';
-
-import 'package:dartz/dartz.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../../../core/failure/failure.dart';
-import '../../domain/entities/product.dart';
+import '../../../../core/exception/exception.dart';
 import '../models/product_model.dart';
 
+/// A data source for handling local operations related to products.
+///
+/// This class uses `SharedPreferences` to store and retrieve products locally.
 abstract class ProductLocalDataSource {
-  Future<Either<Failure, ProductModel>> getProduct(String productId);
-  Future<Either<Failure, List<Product>>> getAllProducts();
-  Future<Either<Failure, void>> insertProduct(Product product);
-  Future<Either<Failure, void>> updateProduct(Product product);
-  Future<Either<Failure, void>> deleteProduct(String productId);
-  Future<Either<Failure, void>> cacheProduct(Product product);
-  Future<Either<Failure, void>> cacheAllProducts(List<Product> products);
+  Future<List<ProductModel>> getAllProducts();
+  Future<ProductModel> getProduct(String id);
+  Future<void> insertProduct(ProductModel product);
+  Future<void> updateProduct(ProductModel product);
+  Future<void> deleteProduct(String id);
+  Future<void> cacheProducts(List<ProductModel> products);
+  Future<void> cacheProduct(ProductModel product);
+  Future<List<ProductModel>> getLastProducts();
+  Future<ProductModel> getCachedProduct(String id);
 }
 
-class ProductLocalDataSourceImpl extends ProductLocalDataSource {
+const cachedProductsKey = 'CACHED_PRODUCTS';
+
+class ProductLocalDataSourceImpl implements ProductLocalDataSource {
   final SharedPreferences sharedPreferences;
 
-  ProductLocalDataSourceImpl({required this.sharedPreferences});
+  ProductLocalDataSourceImpl(this.sharedPreferences);
 
   @override
-  Future<Either<Failure, ProductModel>> getProduct(String productId) async {
-    try {
-      final jsonString = sharedPreferences.getString(productId);
-      if (jsonString != null) {
-        final productModel = ProductModel.forLocalJson(json.decode(jsonString));
-        return Right(productModel);
-      } else {
-        return const Left(
-            CacheFailure('Product not found in cache')); // Handle cache failure
+  Future<List<ProductModel>> getAllProducts() async {
+    final jsonString = sharedPreferences.getString(cachedProductsKey);
+    if (jsonString != null) {
+      final List<dynamic> jsonList = json.decode(jsonString);
+      return jsonList.map((json) => ProductModel.fromJson(json)).toList();
+    } else {
+      throw CacheException();
+    }
+  }
+
+  @override
+  Future<ProductModel> getProduct(String id) async {
+    final jsonString = sharedPreferences.getString(cachedProductsKey);
+    if (jsonString != null) {
+      final List<dynamic> jsonList = json.decode(jsonString);
+      final List<ProductModel> products =
+          jsonList.map((json) => ProductModel.fromJson(json)).toList();
+      try {
+        return products.firstWhere((product) => product.id == id);
+      } catch (_) {
+        throw CacheException();
       }
-    } catch (e) {
-      return const Left(CacheFailure(
-          'Error getting product from cache')); // Handle cache failure
+    } else {
+      throw CacheException();
     }
   }
 
   @override
-  Future<Either<Failure, void>> deleteProduct(String productId) async {
-    try {
-      final jsonString = sharedPreferences.getString(productId);
-      if (jsonString != null) {
-        await sharedPreferences.remove(productId);
-        return const Right(null); // Success case
+  Future<void> insertProduct(ProductModel product) async {
+    final jsonString = sharedPreferences.getString(cachedProductsKey);
+    if (jsonString != null) {
+      final List<dynamic> jsonList = json.decode(jsonString);
+      final List<ProductModel> products =
+          jsonList.map((json) => ProductModel.fromJson(json)).toList();
+      products.add(product);
+      await cacheProducts(products);
+    } else {
+      await cacheProducts([product]);
+    }
+  }
+
+  @override
+  Future<void> updateProduct(ProductModel updatedProduct) async {
+    final jsonString = sharedPreferences.getString(cachedProductsKey);
+    if (jsonString != null) {
+      final List<dynamic> jsonList = json.decode(jsonString);
+      final List<ProductModel> products =
+          jsonList.map((json) => ProductModel.fromJson(json)).toList();
+      final index = products.indexWhere((product) => product.id == updatedProduct.id);
+      if (index != -1) {
+        products[index] = updatedProduct;
+        await cacheProducts(products);
       } else {
-        return const Left(
-            CacheFailure('Product not found in cache')); // Handle cache failure
+        throw CacheException();
       }
-    } catch (e) {
-      return const Left(CacheFailure(
-          'Error deleting product from cache')); // Handle cache failure
+    } else {
+      throw CacheException();
     }
   }
 
   @override
-  Future<Either<Failure, void>> insertProduct(Product product) async {
-    try {
-      final jsonString = jsonEncode(ProductModel.fromDomain(product).toJson());
-      await sharedPreferences.setString(product.id.toString(), jsonString);
-      return const Right(null); // Success case
-    } catch (e) {
-      return const Left(CacheFailure(
-          'Error inserting product into cache')); // Handle cache failure
+  Future<void> deleteProduct(String id) async {
+    final jsonString = sharedPreferences.getString(cachedProductsKey);
+    if (jsonString != null) {
+      final List<dynamic> jsonList = json.decode(jsonString);
+      final List<ProductModel> products =
+          jsonList.map((json) => ProductModel.fromJson(json)).toList();
+      products.removeWhere((product) => product.id == id);
+      await cacheProducts(products);
+    } else {
+      throw CacheException();
     }
   }
 
   @override
-  Future<Either<Failure, void>> updateProduct(Product product) async {
-    try {
-      final jsonString = jsonEncode(ProductModel.fromDomain(product).toJson());
-      await sharedPreferences.setString(product.id.toString(), jsonString);
-      return const Right(null); // Success case
-    } catch (e) {
-      return const Left(CacheFailure(
-          'Error updating product in cache')); // Handle cache failure
+  Future<void> cacheProducts(List<ProductModel> products) async {
+    final List<Map<String, dynamic>> jsonList =
+        products.map((product) => product.toJson()).toList();
+    final jsonString = json.encode(jsonList);
+    await sharedPreferences.setString(cachedProductsKey, jsonString);
+  }
+
+  @override
+  Future<void> cacheProduct(ProductModel product) async {
+    final jsonString = sharedPreferences.getString(cachedProductsKey);
+    if (jsonString != null) {
+      final List<dynamic> jsonList = json.decode(jsonString);
+      final List<ProductModel> products =
+          jsonList.map((json) => ProductModel.fromJson(json)).toList();
+      products.add(product);
+      await cacheProducts(products);
+    } else {
+      await cacheProducts([product]);
     }
   }
 
   @override
-  Future<Either<Failure, List<Product>>> getAllProducts() async {
-    try {
-      final List<String>? jsonStringList =
-          sharedPreferences.getStringList('productList');
-      if (jsonStringList != null && jsonStringList.isNotEmpty) {
-        final List<Product> products = jsonStringList
-            .map((jsonString) =>
-                ProductModel.forLocalJson(jsonDecode(jsonString)))
-            .toList();
-        return Right(products);
-      } else {
-        return const Left(CacheFailure('No products found in cache'));
-      }
-    } catch (e) {
-      return const Left(CacheFailure('Error getting products from cache'));
-    }
+  Future<List<ProductModel>> getLastProducts() async {
+    return await getAllProducts();
   }
 
   @override
-  Future<Either<Failure, void>> cacheAllProducts(List<Product> products) async {
-    try {
-      final jsonString = jsonEncode(
-          products.map((e) => ProductModel.fromDomain(e).toJson()).toList());
-      final result =
-          await sharedPreferences.setStringList('productList', [jsonString]);
-
-      if (result) {
-        return const Right(null);
-      } else {
-        return const Left(CacheFailure('Error caching products in cache'));
-      }
-    } catch (e) {
-      return const Left(CacheFailure('Error caching products in cache'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> cacheProduct(Product product) async {
-    try {
-      final jsonString = jsonEncode(ProductModel.fromDomain(product).toJson());
-      await sharedPreferences.setString(product.id.toString(), jsonString);
-      return const Right(null); // Success case
-    } catch (e) {
-      return const Left(CacheFailure(
-          'Error caching product in cache')); // Handle cache failure
-    }
+  Future<ProductModel> getCachedProduct(String id) async {
+    return await getProduct(id);
   }
 }
