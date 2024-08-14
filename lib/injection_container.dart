@@ -10,14 +10,14 @@ import 'features/product/domain/usecases/get_all_products.dart';
 import 'features/product/domain/usecases/get_product.dart';
 import 'features/product/domain/usecases/insert_product.dart';
 import 'features/product/domain/usecases/update_product.dart';
-import 'features/product/presentation/bloc/product_bloc_bloc.dart';
+import 'features/product/presentation/bloc/product_bloc.dart';
 
 GetIt sl = GetIt.instance;
 
 void init() {
 // bloc
   sl.registerFactory(
-    () => ProductBlocBloc(
+    () => ProductBloc(
         getAllProducts: sl(),
         getProduct: sl(),
         updateProduct: sl(),

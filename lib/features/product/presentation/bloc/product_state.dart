@@ -2,7 +2,7 @@ part of 'product_bloc.dart';
 
 sealed class ProductState extends Equatable {
   const ProductState();
-  
+
   @override
   List<Object> get props => [];
 }
@@ -36,4 +36,13 @@ class ErrorProductState extends ProductState {
 
   @override
   List<Object> get props => [message];
+}
+
+class DeletedProductState extends ProductState {
+  final String productId;
+
+  const DeletedProductState(this.productId);
+
+  @override
+  List<Object> get props => [productId];
 }

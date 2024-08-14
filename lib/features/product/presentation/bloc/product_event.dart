@@ -6,10 +6,13 @@ sealed class ProductEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
-class LoadAllProductEvent extends ProductEvent {}
+
+class LoadAllProductEvent extends ProductEvent {
+  const LoadAllProductEvent();
+}
 
 class GetSingleProductEvent extends ProductEvent {
-  final int productId;
+  final String productId;
 
   const GetSingleProductEvent(this.productId);
 
@@ -27,7 +30,7 @@ class UpdateProductEvent extends ProductEvent {
 }
 
 class DeleteProductEvent extends ProductEvent {
-  final int productId;
+  final String productId;
 
   const DeleteProductEvent(this.productId);
 

@@ -5,6 +5,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'features/product/presentation/pages/product_home_page.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -20,26 +22,30 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
       home: const RootPage(),
-      // onGenerateRoute: (settings) {
-      //   switch (settings.name) {
-      //     case '/details':
-      //       return MaterialPageRoute(
-      //         builder: (context) => const DetailsPage(),
-      //       );
-      //     case '/add_update':
-      //       return MaterialPageRoute(
-      //         builder: (context) => const AddUpdatePage(),
-      //       );
-      //     case '/search':
-      //       return MaterialPageRoute(
-      //         builder: (context) => const SearchPage(),
-      //       );
-      //     default:
-      //       return MaterialPageRoute(
-      //         builder: (context) => const RootPage(),
-      //       );
-      //   }
-      // },
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/home':
+          return MaterialPageRoute(
+            builder: (context) => const ProductHomePage(),
+          );
+          // case '/details':
+          //   return MaterialPageRoute(
+          //     builder: (context) => const ProductDetailPage(),
+          //   );
+          // case '/add_update':
+          //   return MaterialPageRoute(
+          //     builder: (context) => const AddUpdatePage(),
+          //   );
+          // case '/search':
+          //   return MaterialPageRoute(
+          //     builder: (context) => const SearchPage(),
+          //   );
+          default:
+            return MaterialPageRoute(
+              builder: (context) => const RootPage(),
+            );
+        }
+      },
     );
   }
 }
@@ -55,9 +61,8 @@ class _RootPageState extends State<RootPage> {
   int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
-    // return Scaffold(
-    //   body: HomePage(),
-    // );
+    return const Scaffold(
+      body: ProductHomePage(),
+    );
   }
 }
