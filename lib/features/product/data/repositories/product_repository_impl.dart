@@ -14,7 +14,7 @@ class ProductRepositoryImpl implements ProductRepository {
   final ProductLocalDataSource localDataSource;
   final NetworkInfo networkInfo;
 
-  ProductRepositoryImpl({
+  ProductRepositoryImpl(Object object, {
     required this.remoteDataSource,
     required this.localDataSource,
     required this.networkInfo,
