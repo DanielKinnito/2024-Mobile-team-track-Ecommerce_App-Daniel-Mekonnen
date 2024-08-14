@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
 /// Represents a failure that can occur in the application.
@@ -22,7 +21,7 @@ abstract class Failure extends Equatable {
 /// This class extends [Failure] and provides a [message] that describes the server failure.
 class ServerFailure extends Failure {
   /// Creates a new instance of [ServerFailure] with the given [message].
-  const ServerFailure(String message) : super(message);
+  const ServerFailure(super.message);
 }
 
 /// Represents a failure caused by a connection error.
@@ -30,7 +29,7 @@ class ServerFailure extends Failure {
 /// This class extends [Failure] and provides a [message] that describes the connection failure.
 class ConnectionFailure extends Failure {
   /// Creates a new instance of [ConnectionFailure] with the given [message].
-  const ConnectionFailure(String message) : super(message);
+  const ConnectionFailure(super.message);
 }
 
 /// Represents a failure caused by a database error.
@@ -38,7 +37,7 @@ class ConnectionFailure extends Failure {
 /// This class extends [Failure] and provides a [message] that describes the database failure.
 class DatabaseFailure extends Failure {
   /// Creates a new instance of [DatabaseFailure] with the given [message].
-  const DatabaseFailure(String message) : super(message);
+  const DatabaseFailure(super.message);
 }
 
 /// Represents a failure caused by a cache error.
@@ -46,5 +45,5 @@ class DatabaseFailure extends Failure {
 /// This class extends [Failure] and provides a [message] that describes the cache failure.
 class CacheFailure extends Failure {
   /// Creates a new instance of [CacheFailure] with the given [message].
-  const CacheFailure(String message) : super(message);
+  const CacheFailure(super.message);
 }

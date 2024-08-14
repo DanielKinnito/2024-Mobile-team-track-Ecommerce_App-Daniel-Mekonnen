@@ -30,11 +30,11 @@ void main() {
     'should insert a product into the repository',
     () async {
       // arrange
-      when(productRepository.insertProduct(product)).thenAnswer((_) async => Right(product));
+      when(productRepository.insertProduct(product)).thenAnswer((_) async => const Right(product));
       // act
       final result = await usecase(product);
       // assert
-      expect(result, equals(Right(product)));
+      expect(result, equals(const Right(product)));
       verify(productRepository.insertProduct(product));
       verifyNoMoreInteractions(productRepository);
     },
@@ -44,11 +44,11 @@ void main() {
     'should return a failure when insertion fails',
     () async {
       // arrange
-      when(productRepository.insertProduct(product)).thenAnswer((_) async => Left(DatabaseFailure('Insertion failed')));
+      when(productRepository.insertProduct(product)).thenAnswer((_) async => const Left(DatabaseFailure('Insertion failed')));
       // act
       final result = await usecase(product);
       // assert
-      expect(result, equals(Left(DatabaseFailure('Insertion failed'))));
+      expect(result, equals(const Left(DatabaseFailure('Insertion failed'))));
       verify(productRepository.insertProduct(product)).called(1);
       verifyNoMoreInteractions(productRepository);
     },

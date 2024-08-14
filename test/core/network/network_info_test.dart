@@ -31,7 +31,6 @@ void main() {
     verify(mockInternetConnectionChecker.hasConnection);
     verifyNoMoreInteractions(mockInternetConnectionChecker);
   });
-  ;
 
   test('should return false when there is no connection', () async {
     final tHasNoConnectionFuture = Future.value(false);

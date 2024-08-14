@@ -55,7 +55,7 @@ void main() {
       // act
       final result = await repository.getProduct(tProduct.id);
       // assert
-      expect(result, equals(Right(tProduct)));
+      expect(result, equals(const Right(tProduct)));
       verify(mockLocalDataSource.getCachedProduct(tProduct.id));
       verifyNoMoreInteractions(mockLocalDataSource);
     });
@@ -68,7 +68,7 @@ void main() {
       // act
       final result = await repository.getProduct(tProduct.id);
       // assert
-      expect(result, equals(Right(tProduct)));
+      expect(result, equals(const Right(tProduct)));
       verify(mockRemoteDataSource.getProduct(tProduct.id));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -81,7 +81,7 @@ void main() {
       // act
       final result = await repository.getProduct(tProduct.id);
       // assert
-      expect(result, equals(Left(ServerFailure('Server error'))));
+      expect(result, equals(const Left(ServerFailure('Server error'))));
       verify(mockRemoteDataSource.getProduct(tProduct.id));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -92,7 +92,7 @@ void main() {
       // act
       final result = await repository.getProduct(tProduct.id);
       // assert
-      expect(result, equals(Left(ConnectionFailure('No Internet Connection'))));
+      expect(result, equals(const Left(ConnectionFailure('No Internet Connection'))));
       verifyZeroInteractions(mockRemoteDataSource);
       verifyZeroInteractions(mockLocalDataSource);
     });
@@ -106,7 +106,7 @@ void main() {
       // act
       final result = await repository.insertProduct(tProduct);
       // assert
-      expect(result, equals(Right(tProduct)));
+      expect(result, equals(const Right(tProduct)));
       verify(mockRemoteDataSource.insertProduct(tProductModel));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -118,7 +118,7 @@ void main() {
       // act
       final result = await repository.insertProduct(tProduct);
       // assert
-      expect(result, equals(Left(ServerFailure('Server error'))));
+      expect(result, equals(const Left(ServerFailure('Server error'))));
       verify(mockRemoteDataSource.insertProduct(tProductModel));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -129,7 +129,7 @@ void main() {
       // act
       final result = await repository.insertProduct(tProduct);
       // assert
-      expect(result, equals(Left(ConnectionFailure('No Internet Connection'))));
+      expect(result, equals(const Left(ConnectionFailure('No Internet Connection'))));
       verifyZeroInteractions(mockRemoteDataSource);
     });
   });
@@ -142,7 +142,7 @@ void main() {
       // act
       final result = await repository.updateProduct(tProduct);
       // assert
-      expect(result, equals(Right(tProduct)));
+      expect(result, equals(const Right(tProduct)));
       verify(mockRemoteDataSource.updateProduct(tProductModel));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -154,7 +154,7 @@ void main() {
       // act
       final result = await repository.updateProduct(tProduct);
       // assert
-      expect(result, equals(Left(ServerFailure('Server error'))));
+      expect(result, equals(const Left(ServerFailure('Server error'))));
       verify(mockRemoteDataSource.updateProduct(tProductModel));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -165,7 +165,7 @@ void main() {
       // act
       final result = await repository.updateProduct(tProduct);
       // assert
-      expect(result, equals(Left(ConnectionFailure('No Internet Connection'))));
+      expect(result, equals(const Left(ConnectionFailure('No Internet Connection'))));
       verifyZeroInteractions(mockRemoteDataSource);
     });
   });
@@ -178,7 +178,7 @@ void main() {
       // act
       final result = await repository.deleteProduct(tProduct.id);
       // assert
-      expect(result, equals(Right('Product deleted successfully')));
+      expect(result, equals(const Right('Product deleted successfully')));
       verify(mockRemoteDataSource.deleteProduct(tProduct.id));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -190,7 +190,7 @@ void main() {
       // act
       final result = await repository.deleteProduct(tProduct.id);
       // assert
-      expect(result, equals(Left(ServerFailure('Server error'))));
+      expect(result, equals(const Left(ServerFailure('Server error'))));
       verify(mockRemoteDataSource.deleteProduct(tProduct.id));
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
@@ -201,7 +201,7 @@ void main() {
       // act
       final result = await repository.deleteProduct(tProduct.id);
       // assert
-      expect(result, equals(Left(ConnectionFailure('No Internet Connection'))));
+      expect(result, equals(const Left(ConnectionFailure('No Internet Connection'))));
       verifyZeroInteractions(mockRemoteDataSource);
     });
   });

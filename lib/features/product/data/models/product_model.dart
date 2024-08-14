@@ -8,15 +8,19 @@ import '../../domain/entities/product.dart';
 /// data sources.
 class ProductModel extends Product {
   /// The unique identifier of the product.
+  @override
   final String id;
 
   /// The name of the product.
+  @override
   final String name;
 
   /// A description of the product.
+  @override
   final String description;
 
   /// The price of the product.
+  @override
   final double price;
   @override
   final String imageUrl;
