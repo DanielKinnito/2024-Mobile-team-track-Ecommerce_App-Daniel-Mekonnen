@@ -27,8 +27,8 @@ class ProductCard extends StatelessWidget {
                 topLeft: Radius.circular(16.0),
                 topRight: Radius.circular(16.0),
               ),
-              child: Image.asset(
-                'images/${product.imageUrl}',
+              child: Image.network(
+                product.imageUrl,
                 height: 160,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -39,44 +39,49 @@ class ProductCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    product.name,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 4.0),
-                  Text(
-                    product.description,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(height: 4.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '\$${product.price}',
+                        product.name,
                         style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
                         ),
                       ),
-                      const Row(
+                      Text(
+                        '\$${product.price}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Category',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      Row(
                         children: [
                           Icon(
                             Icons.star,
-                            color: Colors.yellow,
+                            color: Colors.amberAccent,
                           ),
                           Text(
-                            '(4.5)', // Placeholder rating
+                            '(4.0)',
                             style: TextStyle(
-                              fontSize: 12,
                               fontWeight: FontWeight.w400,
+                              fontSize: 16,
                               color: Colors.grey,
                             ),
                           ),

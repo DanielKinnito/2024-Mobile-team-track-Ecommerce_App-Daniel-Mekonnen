@@ -18,7 +18,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final DeleteProduct deleteProduct;
   final InsertProduct insertProduct;
 
-  ProductBloc({
+  ProductBloc( {
     required this.getAllProducts,
     required this.getProduct,
     required this.updateProduct,
@@ -70,4 +70,6 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       );
     });
   }
+
+  get products => null;
 }

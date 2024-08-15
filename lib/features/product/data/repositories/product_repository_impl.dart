@@ -10,11 +10,11 @@ import '../data_sources/product_remote_data_source.dart';
 import '../models/product_model.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
-  final ProductRemoteDataSource remoteDataSource;
-  final ProductLocalDataSource localDataSource;
-  final NetworkInfo networkInfo;
+  final ProductRemoteDataSourceImpl remoteDataSource;
+  final ProductLocalDataSourceImpl localDataSource;
+  final NetworkInfoImpl networkInfo;
 
-  ProductRepositoryImpl(Object object, {
+  ProductRepositoryImpl(Object object, ProductLocalDataSourceImpl productLocalDataSourceImpl, NetworkInfoImpl networkInfoImpl, {
     required this.remoteDataSource,
     required this.localDataSource,
     required this.networkInfo,
