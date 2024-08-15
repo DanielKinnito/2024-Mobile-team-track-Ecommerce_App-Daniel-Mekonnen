@@ -69,8 +69,8 @@ class ProductDetailsPage extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
-                              BlocProvider.of<ProductBloc>(context).add(
-                                  DeleteProductEvent(product.id));
+                              BlocProvider.of<ProductBloc>(context)
+                                  .add(DeleteProductEvent(product.id));
                             },
                             child: const Text(
                               'DELETE',
