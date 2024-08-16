@@ -13,6 +13,11 @@ A Flutter Mobile Application built for the 2024 A2SV Summer Internship in the mo
 - [Task 14](#task-14)
 - [Task 15](#task-15)
 - [Task 16](#task-16)
+- [Task 17](#task-17)
+- [Task 18](#task-18)
+- [Task 19](#task-19)
+- [Task 20](#task-20)
+- [Task 21](#task-21)
 
 ## Task 6
 ### Implementing a Flutter User Interface
@@ -155,3 +160,99 @@ In this task, you will be implementing a remote datasource for the Ecommerce app
 ## Task 16
 ### Improve Code Organization and Reusability
 - In this task, you will enhance the code organization and reusability of the Ecommerce app. By following best practices, you will improve the maintainability and efficiency of the codebase. [In-Progress]
+
+## Task 17
+### Implement Bloc
+On this section you will continue working on continuing ecommerce app and add bloc to our app. 
+
+1. Task 17.1: Create Event Classes
+  Create the necessary Event classes for your ecommerce app. These events will represent different user actions that trigger changes in your app's state. Define the following event classes:
+
+  - LoadAllProductEvent: This event should be dispatched when the user wants to load all products from the repository. ✔️
+  - GetSingleProductEvent: Dispatch this event when the user wants to retrieve a single product using its ID. ✔️
+  - UpdateProductEvent: Dispatch this event when the user wants to update a product's details.✔️
+  - DeleteProductEvent: Dispatch this event when the user wants to delete a product.✔️
+  - CreateProductEvent: Dispatch this event when the user wants to create a new product. ✔️
+
+2. Task 17.2: Create State Classes
+  Design the State classes that will represent the various states of your app's UI. These states will guide your app's behavior based on user interactions and data updates. Implement the following state classes:
+
+  - IntialState: Represents the initial state before any data is loaded.✔️
+  - LoadingState: Indicates that the app is currently fetching data.✔️
+  - LoadedAllProductState: Represents the state where all products are successfully loaded from the repository.✔️
+  - LoadedSingleProductState: Represents the state where a single product is successfully retrieved.✔️
+  - ErrorState: Indicates that an error has occurred during data retrieval or processing.✔️
+
+3. Task 17.3: Create ProductBloc
+  Develop the product BLoC by creating a new class named product Bloc. This class will handle the business logic, event processing, and state management for your product app. Implement the following tasks within the productBloc:
+
+  - Set up the initial state of the bloc to EmptyState.✔️
+  - Create the necessary methods to handle each event. For example, implement methods like mapEventToState to process events and return the corresponding states.✔️
+  - Implement the logic for each event, interacting with the provided use cases (getAllProduct, getSingleProduct, updateProduct, deleteProduct, createProduct) and transforming the states accordingly.✔️
+  - Utilize Streams to emit the appropriate states based on the logic and events processed.✔️
+  - Ensure proper error handling for events that could result in failures, and emit the ErrorState when necessary.✔️
+  - Make sure that the ProductBloc is properly injected into your app's components, and that you're using the bloc to manage the UI state effectively. ✔️
+
+
+## Task 18
+### Dependency Injection
+Before we can create a UI, we need to connect the various components together. Each class in our project is decoupled from its dependencies by accepting them through its constructor, so we need a way to provide these dependencies. By using the get_it package in Flutter, we can manage dependency injection efficiently. This approach aligns with the principles of clean architecture, where the responsibility of creating objects is separated. It promotes better organization, testability, maintainability, and allows for easily swapping implementations when needed.
+
+### Grading System
+- Setup and configuration:
+  - Correctly add the get_it package to the pubspec.yaml file.✔️
+  - Import the necessary get_it package in the injection container file. ✔️
+- Creating the Injection Container:
+  - Define a singleton instance of the GetIt service locator. ✔️
+  - Register all necessary dependencies (e.g., repositories, services, and view models) with appropriate scope (e.g., singleton, factory).✔️
+  - Ensure that all dependencies are registered in the correct manner, respecting any necessary dependency chains. ✔️
+
+## Task 19
+### Implement User Interface ✔️
+
+## Task 20
+### Consume Bloc for eCommerce
+In the process of building the user interface for the ecommerce app as part of the "Flutter TDD Clean Architecture Course - User Interface," your Product is to integrate and consume the Bloc pattern for various Product management functionalities. This will involve creating, retrieving all Products, and getting Product details.
+
+### Product Objectives:
+Demonstrate the ability to connect UI components with the Bloc pattern for state management.
+Apply Clean Architecture principles to maintain separation of concerns and modularity.
+Implement the required UI components and interaction to showcase the Product management functionalities.
+
+### Products
+- Create Product Page:
+  - Design a screen that allows users to input product details and create a new product. ✔️
+  - Consume the appropriate bloc method to handle the product creation process.✔️
+  - Display feedback to the user based on the success or failure of the creation process.⚪
+
+- Retrieve All Products Page:
+  - Design a screen that displays a list of all Products.✔️
+  - Consume the bloc method responsible for retrieving all products.✔️
+  - Implement UI components to display the list of products.✔️
+
+- Product Detail Page:
+  - Design a screen that shows detailed information about a selected Product.✔️
+  - Consume the bloc method to fetch Product details based on the selected Product.✔️
+  - Display the Product title, description, due date, and status on the detail page.✔️
+
+- Edit Product Page:
+  - Consume the appropriate bloc method to handle the product editing process.✔️
+  - Display feedback to the user based on the success or failure of the editing process.⚪
+
+- Delete Product Page:
+  - Consume the appropriate bloc method to handle the product deletion process. ✔️
+  - Display feedback to the user based on the success or failure of the deletion process. ⚪
+
+- Navigation and Routing:
+  - Set up proper navigation between the product-related pages (create product, all products, product detail).✔️
+  - Implement appropriate routing mechanisms to ensure a smooth user experience.✔️
+
+- Testing:
+  - Write unit tests to ensure that UI components are correctly connected to the Bloc and reflect the expected behavior.⚪
+  - Verify that the UI responds appropriately to different states emitted by the Bloc.⚪
+
+- Code Cleanup and Refactoring:
+  - Apply Clean Architecture principles to organize your code into presentation, domain, and data layers.✔️
+  - Ensure that your code is readable, maintainable, and follows best practices.✔️
+
+
