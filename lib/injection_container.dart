@@ -14,6 +14,11 @@ import 'features/product/domain/usecases/get_product.dart';
 import 'features/product/domain/usecases/insert_product.dart';
 import 'features/product/domain/usecases/update_product.dart';
 import 'features/product/presentation/bloc/product_bloc.dart';
+import 'features/user/data/datasources/user_remote_data_source.dart';
+import 'features/user/data/repositories/user_repository_impl.dart';
+import 'features/user/domain/repositories/user_repository.dart';
+import 'features/user/domain/usecase/login_user.dart';
+import 'features/user/domain/usecase/register_user.dart';
 
 final sl = GetIt.instance;
 
@@ -36,7 +41,8 @@ Future<void> init() async {
       () => ProductRemoteDataSourceImpl(client: sl()));
   sl.registerLazySingleton<ProductLocalDataSource>(
       () => ProductLocalDataSourceImpl(sharedPreferences: sl()));
-
+  sl.registerLazySingleton<UserRemoteDataSource>(
+      () => UserRemoteDataSourceImpl(client: sl()));
   //! Features
   // Repositories
 
@@ -48,6 +54,7 @@ Future<void> init() async {
         localDataSource: sl(),
         networkInfo: sl(),
       ));
+  sl.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(remoteDataSource: sl()));
 
   // Use Cases
   sl.registerLazySingleton<GetAllProducts>(() => GetAllProducts(sl()));
@@ -64,4 +71,8 @@ Future<void> init() async {
       updateProduct: sl(),
       deleteProduct: sl(),
       insertProduct: sl()));
+  
+  sl.registerLazySingleton(() => LoginUser(sl(), repository: sl()));
+  sl.registerLazySingleton(() => RegisterUser(sl()));
+  // sl.registerLazySingleton(() => AuthFacadeImpl(loginUseCase: sl(), registerUseCase: sl()))
 }

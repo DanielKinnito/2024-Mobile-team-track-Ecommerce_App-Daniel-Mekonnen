@@ -98,7 +98,7 @@ class ProductHomePage extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      ProductDetailsPage(product: product),
+                                      ProductDetailsPage(product: product, id: product.id,),
                                 ),
                               );
                             },

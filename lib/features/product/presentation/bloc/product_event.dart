@@ -49,3 +49,11 @@ class CreateProductEvent extends ProductEvent {
 
   Product? get newProduct => null;
 }
+class SearchProductsEvent extends ProductEvent {
+  final String query;
+
+  const SearchProductsEvent({required this.query});
+
+  @override
+  List<Object> get props => [query];
+}

@@ -5,7 +5,8 @@ import 'package:myapp/features/product/domain/entities/product.dart';
 import 'package:myapp/features/product/domain/repositories/product_repository.dart';
 import 'package:myapp/features/product/domain/usecases/get_product.dart';
 
-import 'insert_product_test.mocks.dart';
+import '../../helpers/mocks.mocks.dart';
+
 
 void main(){
   late ProductRepository productRepository;

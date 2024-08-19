@@ -19,6 +19,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final DeleteProduct deleteProduct;
   final InsertProduct insertProduct;
 
+  List<Product> orginal = [];
+
   ProductBloc({
     required this.getAllProducts,
     required this.getProduct,
@@ -74,6 +76,24 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         (productId) => emit(DeletedProductState(productId)),
       );
     });
+    on<SearchProductsEvent>(_onSearchProducts);
+  }
+  Future<void> _onSearchProducts(
+      SearchProductsEvent event, Emitter<ProductState> emit) async {
+    emit(LoadingProductState());
+
+    final result = orginal;
+    if (event.query.trim() == "") {
+      emit(SearchPageLoadedState(orginal));
+    }
+
+    final filteredProducts = result
+        .where((product) => product.name
+            .trim()
+            .toLowerCase()
+            .contains(event.query.trim().toLowerCase()))
+        .toList();
+    emit(SearchPageLoadedState(filteredProducts));
   }
 
   Null get products => null;
