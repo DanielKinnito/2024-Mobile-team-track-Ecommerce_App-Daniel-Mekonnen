@@ -39,10 +39,13 @@ class DeleteProductEvent extends ProductEvent {
 }
 
 class CreateProductEvent extends ProductEvent {
-  final Product newProduct;
+  final ProductModel product;
+  final String imagePath;
 
-  const CreateProductEvent(this.newProduct);
+  const CreateProductEvent(this.product, this.imagePath);
 
   @override
-  List<Object> get props => [newProduct];
+  List<Object> get props => [product, imagePath];
+
+  Product? get newProduct => null;
 }

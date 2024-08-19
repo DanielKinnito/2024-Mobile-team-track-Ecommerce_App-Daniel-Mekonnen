@@ -46,3 +46,19 @@ class DeletedProductState extends ProductState {
   @override
   List<Object> get props => [productId];
 }
+final class AddPageSubmittedState extends ProductState {
+  final ProductModel product;
+
+  const AddPageSubmittedState(this.product);
+
+  @override
+  List<Object> get props => [product];
+}
+class UpdatePageSubmittedState extends ProductState {
+  final ProductModel product;
+
+  const UpdatePageSubmittedState(this.product);
+
+  @override
+  List<Object> get props => [product];
+}

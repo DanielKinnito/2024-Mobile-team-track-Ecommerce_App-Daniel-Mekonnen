@@ -47,7 +47,7 @@ class ProductHomePage extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
           backgroundColor: const Color.fromRGBO(63, 81, 243, 1),
           onPressed: () {
-            Navigator.pushNamed(context, '/add_update');
+            Navigator.pushNamed(context, '/add');
           },
           shape: const CircleBorder(),
           child: const Icon(

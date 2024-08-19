@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/product.dart';
 import '../bloc/product_bloc.dart';
 import '../widgets/details_card.dart';
-import '../widgets/size_widget.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   final Product product;
@@ -98,7 +97,7 @@ class ProductDetailsPage extends StatelessWidget {
                             onPressed: () {
                               Navigator.pushNamed(
                                 context,
-                                '/add_update',
+                                '/update',
                                 arguments:
                                     product, // Pass the product as an argument
                               );

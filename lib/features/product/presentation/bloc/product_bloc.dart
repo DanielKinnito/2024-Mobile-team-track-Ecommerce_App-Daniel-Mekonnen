@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../data/models/product_model.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/usecases/delete_product.dart';
 import '../../domain/usecases/get_all_products.dart';
@@ -18,7 +19,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final DeleteProduct deleteProduct;
   final InsertProduct insertProduct;
 
-  ProductBloc( {
+  ProductBloc({
     required this.getAllProducts,
     required this.getProduct,
     required this.updateProduct,
@@ -45,11 +46,15 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
     on<CreateProductEvent>((event, emit) async {
       emit(LoadingProductState());
-      final productOrFailure = await insertProduct(event.newProduct);
-      productOrFailure.fold(
-        (failure) => emit(ErrorProductState(failure.message)),
-        (product) => emit(LoadedSingleProductState(product)),
-      );
+      try {
+        final productOrFailure = await insertProduct(event.product);
+        productOrFailure.fold(
+          (failure) => emit(ErrorProductState(failure.message)),
+          (product) => emit(LoadedSingleProductState(product)),
+        );
+      } on Exception catch (e) {
+        emit(ErrorProductState(e.toString()));
+      }
     });
 
     on<UpdateProductEvent>((event, emit) async {
@@ -71,5 +76,5 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     });
   }
 
-  get products => null;
+  Null get products => null;
 }

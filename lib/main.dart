@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'features/product/domain/entities/product.dart';
+import 'features/product/presentation/pages/product_add_page.dart';
 import 'features/product/presentation/pages/product_add_update_page.dart';
 import 'features/product/presentation/pages/product_details_page.dart';
 import 'features/product/presentation/pages/product_home_page.dart';
 import 'features/product/presentation/pages/product_search_page.dart';
+import 'features/product/presentation/pages/product_update_page.dart';
 import 'injection_container.dart' as di;
 
 const product = Product(
@@ -47,9 +49,13 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) => const ProductDetailsPage(product: product),
             );
-          case '/add_update':
+          case '/add':
             return MaterialPageRoute(
-              builder: (context) => const ProductAddUpdatePage(),
+              builder: (context) => const ProductAddPage(),
+            );
+          case '/update':
+            return MaterialPageRoute(
+              builder: (context) => const ProductUpdatePage(product: product,),
             );
           case '/search':
             return MaterialPageRoute(
