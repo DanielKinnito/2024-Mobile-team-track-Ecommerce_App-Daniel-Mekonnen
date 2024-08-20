@@ -17,7 +17,7 @@ void main() {
     usecase = LoginUser(mockUserRepository);
   });
 
-  var user = User(email: 'email', password: 'password');
+  var user = const User(email: 'email', password: 'password');
   String accessToken = 'granted';
   LoginParams params = LoginParams(email: user.email, password: user.password);
 

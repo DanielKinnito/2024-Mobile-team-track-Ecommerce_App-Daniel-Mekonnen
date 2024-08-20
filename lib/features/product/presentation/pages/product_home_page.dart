@@ -13,8 +13,6 @@ class ProductHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // No need to provide ProductBloc again since it's already provided in MyApp
-
     return Scaffold(
       appBar: AppBar(
         leading: Container(

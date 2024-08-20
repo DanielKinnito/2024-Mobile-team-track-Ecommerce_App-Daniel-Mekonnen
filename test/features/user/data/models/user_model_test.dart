@@ -4,7 +4,7 @@ import 'package:myapp/features/user/domain/entities/user.dart';
 
 void main() {
   // Create a test instance of UserModel
-  var testUserModel = UserModel(
+  var testUserModel = const UserModel(
     id: '12345',
     name: 'John Doe',
     email: 'john.doe@example.com',

@@ -16,12 +16,12 @@ class IconButtonWithBg extends StatelessWidget {
       onPressed: onPressed,
       icon: Icon(icon, color: Colors.grey),
       style: ButtonStyle(
-        shape: MaterialStateProperty.all(
+        shape: WidgetStateProperty.all(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),
         ),
-        backgroundColor: MaterialStateProperty.all(Colors.white),
+        backgroundColor: WidgetStateProperty.all(Colors.white),
       ),
     );
   }

@@ -83,7 +83,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(LoadingProductState());
 
     final result = orginal;
-    if (event.query.trim() == "") {
+    if (event.query.trim() == '') {
       emit(SearchPageLoadedState(orginal));
     }
 

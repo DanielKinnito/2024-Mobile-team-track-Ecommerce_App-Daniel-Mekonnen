@@ -18,10 +18,10 @@ class CustomIconButton extends StatelessWidget {
       icon: Icon(icon, color: color),
       onPressed: onPressed,
       style: ButtonStyle(
-        shape: MaterialStateProperty.all(const RoundedRectangleBorder(
+        shape: WidgetStateProperty.all(const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
         )),
-        backgroundColor: MaterialStateProperty.all(Colors.white),
+        backgroundColor: WidgetStateProperty.all(Colors.white),
       ),
     );
   }

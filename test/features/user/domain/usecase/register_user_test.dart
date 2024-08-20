@@ -18,7 +18,7 @@ void main() {
   });
 
   var user =
-      User(email: 'email@example.com', password: 'password', name: 'John Doe');
+      const User(email: 'email@example.com', password: 'password', name: 'John Doe');
   RegisterParams params = RegisterParams(
     email: user.email,
     password: user.password,

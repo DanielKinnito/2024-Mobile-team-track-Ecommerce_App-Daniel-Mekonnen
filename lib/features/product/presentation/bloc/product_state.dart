@@ -70,5 +70,5 @@ final class SearchPageLoadedState extends ProductState {
   @override
   List<Object> get props => [products];
 
-  get query => null;
+  Null get query => null;
 }

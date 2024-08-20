@@ -46,8 +46,6 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     );
 
     // Log the response for debugging
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
 
     if (response.statusCode == 201) {
       final Map<String, dynamic> data = json.decode(response.body);
@@ -57,12 +55,10 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
         return data['data']['id'];
       } else {
         // Log specific error details for better debugging
-        print('Unexpected response structure: $data');
         throw ServerException(); // Invalid response structure
       }
     } else {
       // Log server error response
-      print('Server Error: ${response.statusCode} - ${response.body}');
       throw ServerException();
     }
   }

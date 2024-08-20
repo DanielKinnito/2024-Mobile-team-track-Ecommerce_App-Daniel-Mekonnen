@@ -14,7 +14,7 @@ class UserModel extends User {
   // ignore: overridden_fields
   final String password;
 
-  UserModel({
+  const UserModel({
     required this.id,
     required this.name,
     required this.email,
@@ -61,5 +61,6 @@ class UserModel extends User {
     );
   }
 
+  @override
   List<Object?> get props => [id, name, email, password];
 }
