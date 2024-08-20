@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../bloc/login_bloc.dart'; // Ensure correct import
+import '../bloc/login_bloc.dart';
+import '../widgets/logo.dart'; // Ensure correct import
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -28,44 +29,11 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 70),
-              Center(
-                child: Container(
-                  height: 50,
-                  width: 143,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(
-                        color: const Color.fromARGB(255, 54, 104, 255), width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.25),
-                        offset: const Offset(0, 4),
-                        blurRadius: 4.0,
-                        spreadRadius: 0.0,
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Text(
-                      'ECOM',
-                      style: GoogleFonts.caveatBrush(
-                        textStyle: const TextStyle(
-                          fontSize: 48.0,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 54, 104, 255),
-                          height: 24.26 / 48.0,
-                          letterSpacing: 2 / 100 * 48.0,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              const Logo(),
               const SizedBox(height: 50.0),
               const Text(
                 'Sign into your account',
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
@@ -140,10 +108,14 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   final email = _emailController.text;
                   final password = _passwordController.text;
-                  context.read<LoginBloc>().add(LoginUserEvent(
-                        email: email,
-                        password: password,
-                      ));
+
+                  BlocProvider.of<LoginBloc>(context).add(
+                    LoginButtonPressed(
+                      email: email,
+                      password: password,
+                    ),
+                  );
+                  Navigator.pushNamed(context, '/home');
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),

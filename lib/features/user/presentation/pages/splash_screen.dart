@@ -22,20 +22,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.pushReplacementNamed(context, '/signin');
+    });
     return Scaffold(
       body: Stack(
         children: [
           // Background image
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    'assets/images/back_ground_lady.png'), // Replace with your image path
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          // Overlay gradient
+          // Container(
+          //   decoration: const BoxDecoration(),
+          //   child: Image.network(
+          //     'https://unsplash.com/photos/body-of-water-g0eRErPBoTA',
+          //     fit: BoxFit.cover,
+          //   ),
+          // ),
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(

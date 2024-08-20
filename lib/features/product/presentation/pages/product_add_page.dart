@@ -27,7 +27,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.product != null ) {
+    if (widget.product != null) {
       _name.text = widget.product!.name;
       _description.text = widget.product!.description;
       _price.text = widget.product!.price.toString();
@@ -47,9 +47,9 @@ class _ProductAddPageState extends State<ProductAddPage> {
         _price.text.isEmpty ||
         _selectedImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields and select an image')),
+        const SnackBar(
+            content: Text('Please fill all fields and select an image')),
       );
-      
     }
 
     final product = ProductModel(
@@ -200,13 +200,24 @@ class _ProductAddPageState extends State<ProductAddPage> {
                     height: 50,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 54, 104, 255),
+                        backgroundColor:
+                            const Color.fromARGB(255, 54, 104, 255),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: _submitProduct,
+                      onPressed: () {
+                        final newProduct = ProductModel(
+                          id: widget.product?.id ?? '',
+                          name: _name.text,
+                          description: _description.text,
+                          price: double.parse(_price.text),
+                          imageUrl: _selectedImage!.path,
+                        );
+                        var addbloc = BlocProvider.of<ProductBloc>(context);
+                        addbloc.add(CreateProductEvent(newProduct, _selectedImage!.path));
+                      },
                       child: const Text(
                         'ADD',
                         style: TextStyle(

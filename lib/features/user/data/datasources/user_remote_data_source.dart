@@ -3,11 +3,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../../../core/constants/constants.dart';
 import '../../../../core/exception/exception.dart';
-import '../models/user_model.dart';
 
 abstract class UserRemoteDataSource {
-  Future<UserModel> loginUser(String email, String password);
-  Future<UserModel> registerUser(String email, String password, String name);
+  Future<String> loginUser(String email, String password);
+  Future<String> registerUser(String email, String password, String name);
 }
 
 class UserRemoteDataSourceImpl implements UserRemoteDataSource {
@@ -16,7 +15,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   UserRemoteDataSourceImpl({required this.client});
 
   @override
-  Future<UserModel> loginUser(String email, String password) async {
+  Future<String> loginUser(String email, String password) async {
     final response = await client.post(
       Uri.parse(UserUrls.loginUser()),
       headers: {'Content-Type': 'application/json'},
@@ -25,15 +24,14 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
-      return UserModel.fromJson(data['data']);
+      return data['access_token']; // Assuming the API returns the token in the 'token' field
     } else {
       throw ServerException();
     }
   }
 
   @override
-  Future<UserModel> registerUser(
-      String email, String password, String name) async {
+  Future<String> registerUser(String email, String password, String name) async {
     final response = await client.post(
       Uri.parse(UserUrls.registerUser()),
       headers: {'Content-Type': 'application/json'},
@@ -46,7 +44,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
     if (response.statusCode == 201) {
       final Map<String, dynamic> data = json.decode(response.body);
-      return UserModel.fromJson(data['data']);
+      return data['token']; // Assuming the API returns the token in the 'token' field
     } else {
       throw ServerException();
     }

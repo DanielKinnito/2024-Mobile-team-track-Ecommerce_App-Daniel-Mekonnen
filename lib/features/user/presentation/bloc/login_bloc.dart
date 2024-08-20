@@ -1,9 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../core/failure/failure.dart';
 import '../../../../core/params/params.dart';
-import '../../domain/entities/user.dart';
 import '../../domain/usecase/login_user.dart';
 
 part 'login_event.dart';
@@ -11,38 +10,30 @@ part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginUser loginUser;
+  final SharedPreferences sharedPreferences;
 
-  LoginBloc({required this.loginUser}) : super(LoginInitial());
+  LoginBloc({required this.loginUser, required this.sharedPreferences}) : super(LoginInitial()) {
+    on<LoginButtonPressed>((event, emit) async {
+      emit(LoginLoading());
 
-  Stream<LoginState> mapEventToState(LoginEvent event) async* {
-    if (event is LoginUserEvent) {
-      yield LoginLoading();
-
-      final result = await loginUser.call(
-        User(
+      final loginResult = await loginUser(
+        LoginParams(
           email: event.email,
           password: event.password,
-        ) as LoginParams,
+        ),
       );
 
-      yield* result.fold(
-        (failure) async* {
-          yield LoginError(message: _mapFailureToMessage(failure));
+      loginResult.fold(
+        (failure) {
+          emit(LoginFailure(message: failure.message));
         },
-        (user) async* {
-          yield LoginSuccess(user: user);
+        (token) async {
+          // Store the access token in SharedPreferences
+          await sharedPreferences.setString('access_token', token as String);
+          
+          emit(LoginSuccess(token: token));
         },
       );
-    }
-  }
-
-  String _mapFailureToMessage(Failure failure) {
-    if (failure is ServerFailure) {
-      return 'Server Error';
-    } else if (failure is ConnectionFailure) {
-      return 'Connection Error';
-    } else {
-      return 'Unexpected Error';
-    }
+    });
   }
 }

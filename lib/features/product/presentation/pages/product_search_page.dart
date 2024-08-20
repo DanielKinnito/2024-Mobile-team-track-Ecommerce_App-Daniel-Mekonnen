@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../injection_container.dart';
-import '../../domain/entities/product.dart';
 import '../bloc/product_bloc.dart';
 import '../widgets/filter_bottom_sheet.dart';
 import '../widgets/product_card.dart';
 import 'product_details_page.dart';
 
 class ProductSearchPage extends StatelessWidget {
+  const ProductSearchPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -67,7 +68,7 @@ class ProductSearchPage extends StatelessWidget {
                       onPressed: () {
                         showModalBottomSheet(
                           context: context,
-                          builder: (context) => FilterBottomSheet(),
+                          builder: (context) => const FilterBottomSheet(),
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.vertical(
                               top: Radius.circular(16),
@@ -88,7 +89,7 @@ class ProductSearchPage extends StatelessWidget {
                 child: BlocBuilder<ProductBloc, ProductState>(
                   builder: (context, state) {
                     if (state is LoadingProductState) {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     } else if (state is SearchPageLoadedState) {
                       return ListView.builder(
                         itemCount: state.products.length,

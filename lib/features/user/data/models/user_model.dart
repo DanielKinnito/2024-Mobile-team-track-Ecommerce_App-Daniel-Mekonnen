@@ -3,10 +3,10 @@ import '../../domain/entities/user.dart';
 class UserModel extends User {
   @override
   // ignore: overridden_fields
-  final String? id;
+  final String id;
   @override
   // ignore: overridden_fields
-  final String? name;
+  final String name;
   @override
   // ignore: overridden_fields
   final String email;
@@ -15,8 +15,8 @@ class UserModel extends User {
   final String password;
 
   UserModel({
-    this.id,
-    this.name,
+    required this.id,
+    required this.name,
     required this.email,
     required this.password,
   }) : super(

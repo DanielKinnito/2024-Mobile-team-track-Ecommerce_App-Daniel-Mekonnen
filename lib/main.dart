@@ -7,7 +7,6 @@
 
 // import 'features/product/domain/entities/product.dart';
 // import 'features/product/presentation/pages/product_add_page.dart';
-// import 'features/product/presentation/pages/product_add_update_page.dart';
 // import 'features/product/presentation/pages/product_details_page.dart';
 // import 'features/product/presentation/pages/product_home_page.dart';
 // import 'features/product/presentation/pages/product_search_page.dart';
@@ -15,10 +14,10 @@
 // import 'injection_container.dart' as di;
 
 // const product = Product(
-//   imageUrl: 'https://res.cloudinary.com/g5-mobile-track/image/upload/v1718777711/images/clmxnecvavxfvrz9by4w.jpg', 
-//   id: '6672776eb905525c145fe0bb', 
-//   name: 'Anime website', 
-//   description: 'Explore anime characters.', 
+//   imageUrl: 'https://res.cloudinary.com/g5-mobile-track/image/upload/v1718777711/images/clmxnecvavxfvrz9by4w.jpg',
+//   id: '6672776eb905525c145fe0bb',
+//   name: 'Anime website',
+//   description: 'Explore anime characters.',
 //   price: 123.0,
 //   );
 // void main() async {
@@ -89,46 +88,52 @@
 // }
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'features/product/presentation/pages/product_home_page.dart';
-import 'features/product/presentation/pages/splash_screen.dart';
 import 'features/user/domain/usecase/login_user.dart';
 import 'features/user/domain/usecase/register_user.dart';
 import 'features/user/presentation/bloc/login_bloc.dart';
 import 'features/user/presentation/bloc/register_bloc.dart';
 import 'features/user/presentation/pages/login_page.dart';
 import 'features/user/presentation/pages/register_page.dart';
+import 'features/user/presentation/pages/splash_screen.dart';
 import 'injection_container.dart' as di;
-import 'injection_container.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
           create: (context) => RegisterBloc(
-            registerUser: sl<RegisterUser>(), // Dependency injection
+            registerUser: di.sl<RegisterUser>(),
           ),
         ),
         BlocProvider(
           create: (context) => LoginBloc(
-            loginUser: sl<LoginUser>(), // Dependency injection
+            loginUser: di.sl<LoginUser>(),
+            sharedPreferences: di.sl<SharedPreferences>(),
           ),
         ),
       ],
       child: MaterialApp(
-        title: 'Your App',
+        debugShowCheckedModeBanner: false,
+        title: 'Ecommerce App',
         theme: ThemeData(
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
+          textTheme: GoogleFonts.poppinsTextTheme(),
         ),
         initialRoute: '/splash',
         routes: {

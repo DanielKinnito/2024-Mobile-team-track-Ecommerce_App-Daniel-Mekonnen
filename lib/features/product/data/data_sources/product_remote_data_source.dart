@@ -1,8 +1,7 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants/constants.dart';
-
 import '../../../../core/exception/exception.dart';
 import '../models/product_model.dart';
 
@@ -16,16 +15,32 @@ abstract class ProductRemoteDataSource {
 
 class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   final http.Client client;
+  final SharedPreferences sharedPreferences;
 
-  ProductRemoteDataSourceImpl({required this.client});
+  ProductRemoteDataSourceImpl({
+    required this.client,
+    required this.sharedPreferences,
+  });
+
+  Future<String?> _getToken() async {
+    return sharedPreferences.getString('access_token');
+  }
 
   @override
   Future<List<ProductModel>> getAllProducts() async {
-    final response = await client.get(Uri.parse(Urls.getAllProducts()));
+    final token = await _getToken();
+    if (token == null) throw AuthenticationException();
+
+    final response = await client.get(
+      Uri.parse(Urls.getAllProducts()),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
-      final List<dynamic> productsJson = data['data']; // Ensure this is a list
+      final List<dynamic> productsJson = data['data'];
       return productsJson.map((json) => ProductModel.fromJson(json)).toList();
     } else {
       throw ServerException();
@@ -34,7 +49,15 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
 
   @override
   Future<ProductModel> getProduct(String id) async {
-    final response = await client.get(Uri.parse(Urls.getProduct(id)));
+    final token = await _getToken();
+    if (token == null) throw AuthenticationException();
+
+    final response = await client.get(
+      Uri.parse(Urls.getProduct(id)),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
@@ -46,9 +69,15 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
 
   @override
   Future<ProductModel> insertProduct(ProductModel product) async {
+    final token = await _getToken();
+    if (token == null) throw AuthenticationException();
+
     final response = await client.post(
       Uri.parse(Urls.insertProduct()),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: json.encode(product.toJson()),
     );
 
@@ -62,9 +91,15 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
 
   @override
   Future<ProductModel> updateProduct(ProductModel product) async {
+    final token = await _getToken();
+    if (token == null) throw AuthenticationException();
+
     final response = await client.put(
       Uri.parse(Urls.updateProduct(product.id)),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: json.encode(product.toJson()),
     );
 
@@ -78,10 +113,18 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
 
   @override
   Future<String> deleteProduct(String id) async {
-    final response = await client.delete(Uri.parse(Urls.deleteProduct(id)));
+    final token = await _getToken();
+    if (token == null) throw AuthenticationException();
+
+    final response = await client.delete(
+      Uri.parse(Urls.deleteProduct(id)),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
 
     if (response.statusCode == 200) {
-      return response.body; // Assuming the response body contains a confirmation message
+      return response.body;
     } else {
       throw ServerException();
     }

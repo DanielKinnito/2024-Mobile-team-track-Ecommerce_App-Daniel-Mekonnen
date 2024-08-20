@@ -192,7 +192,17 @@ class _ProductUpdatePageState extends State<ProductUpdatePage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: _submitProduct,
+                      onPressed: () {
+                        final updatedProduct = ProductModel(
+                          id: widget.product.id,
+                          name: _name.text,
+                          description: _description.text,
+                          price: double.parse(_price.text),
+                          imageUrl: widget.product.imageUrl,
+                        );
+                        var addbloc = BlocProvider.of<ProductBloc>(context);
+                        addbloc.add(UpdateProductEvent(updatedProduct)); 
+                      },
                       child: const Text(
                         'UPDATE',
                         style: TextStyle(
@@ -215,7 +225,9 @@ class _ProductUpdatePageState extends State<ProductUpdatePage> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
-                      onPressed: _deleteProduct,
+                      onPressed: (){
+                        context.read<ProductBloc>().add(DeleteProductEvent(widget.product.id));
+                      },
                       child: const Text(
                         'DELETE',
                         style: TextStyle(

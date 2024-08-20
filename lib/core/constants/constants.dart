@@ -15,5 +15,5 @@ class UserUrls{
 
   static String registerUser() => '$baseUrl/register';
   static String loginUser() => '$baseUrl/login';
-  static String getUser(String id) => '$baseUrl/$id';
+  static String getUser(String id) => '$baseUrl/me';
 }

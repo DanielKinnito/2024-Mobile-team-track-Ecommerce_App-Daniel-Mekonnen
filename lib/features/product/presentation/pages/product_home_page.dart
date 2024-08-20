@@ -21,7 +21,7 @@ class ProductHomePage extends StatelessWidget {
           updateProduct: sl(),
           deleteProduct: sl(),
           insertProduct: sl())
-        ..add(LoadAllProductEvent()),
+        ..add(const LoadAllProductEvent()),
       child: Scaffold(
         appBar: AppBar(
           leading: Container(
