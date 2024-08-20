@@ -11,7 +11,7 @@ class Urls {
 
 class UserUrls{
   static const String baseUrl =
-      'https://g5-flutter-learning-path-be.onrender.com/api/v2/users';
+      'https://g5-flutter-learning-path-be.onrender.com/api/v2/auth';
 
   static String registerUser() => '$baseUrl/register';
   static String loginUser() => '$baseUrl/login';

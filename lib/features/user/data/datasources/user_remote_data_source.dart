@@ -24,14 +24,17 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
     if (response.statusCode == 201) {
       final Map<String, dynamic> data = json.decode(response.body);
-      return data['data']['access_token']; // Assuming the API returns the token in the 'token' field
+      final accessToken =
+          data['data']['access_token']; // Extract token from the 'data' field
+      return accessToken;
     } else {
       throw ServerException();
     }
   }
 
   @override
-  Future<String> registerUser(String email, String password, String name) async {
+  Future<String> registerUser(
+      String email, String password, String name) async {
     final response = await client.post(
       Uri.parse(UserUrls.registerUser()),
       headers: {'Content-Type': 'application/json'},
@@ -42,10 +45,24 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
       }),
     );
 
+    // Log the response for debugging
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
     if (response.statusCode == 201) {
       final Map<String, dynamic> data = json.decode(response.body);
-      return data['token']; // Assuming the API returns the token in the 'token' field
+
+      // Make sure the data field exists and contains the expected fields
+      if (data.containsKey('data') && data['data']['id'] != null) {
+        return data['data']['id'];
+      } else {
+        // Log specific error details for better debugging
+        print('Unexpected response structure: $data');
+        throw ServerException(); // Invalid response structure
+      }
     } else {
+      // Log server error response
+      print('Server Error: ${response.statusCode} - ${response.body}');
       throw ServerException();
     }
   }

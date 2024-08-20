@@ -26,7 +26,6 @@ class UserModel extends User {
           id: '',
         );
 
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:2516028396.
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'],

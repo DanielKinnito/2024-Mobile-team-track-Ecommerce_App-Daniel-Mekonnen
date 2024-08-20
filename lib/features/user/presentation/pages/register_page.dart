@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../injection_container.dart';
-import '../../domain/usecase/register_user.dart';
 import '../bloc/register_bloc.dart';
 import '../widgets/build_textfield.dart';
 import '../widgets/checkbox_widget.dart';
@@ -21,46 +19,57 @@ class RegisterPage extends StatelessWidget {
     final passwordController = TextEditingController();
     final confirmPasswordController = TextEditingController();
 
-    return BlocProvider(
-      create: (context) => RegisterBloc(
-        registerUser: sl<RegisterUser>(),
-      ),
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          leading: const CustomBackButton(),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Container(
-                width: 60,
-                height: 40,
-                padding: const EdgeInsets.only(left: 5, right: 5),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8.0),
-                  border: Border.all(
-                      color: const Color.fromARGB(255, 54, 104, 255), width: 2),
-                ),
-                child: Center(
-                  child: Text(
-                    'ECOM',
-                    style: GoogleFonts.caveatBrush(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 54, 104, 255),
-                    ),
-                    textAlign: TextAlign.center,
+        elevation: 0,
+        leading: const CustomBackButton(),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              width: 60,
+              height: 40,
+              padding: const EdgeInsets.only(left: 5, right: 5),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(
+                    color: const Color.fromARGB(255, 54, 104, 255), width: 2),
+              ),
+              child: Center(
+                child: Text(
+                  'ECOM',
+                  style: GoogleFonts.caveatBrush(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    color: const Color.fromARGB(255, 54, 104, 255),
                   ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
-            const SizedBox(width: 6)
-          ],
-        ),
-        body: SingleChildScrollView(
+          ),
+          const SizedBox(width: 6)
+        ],
+      ),
+      body: BlocListener<RegisterBloc, RegisterState>(
+        listener: (context, state) {
+          if (state is RegisterError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+              ),
+            );
+          } else if (state is RegisterSuccess) {
+            Navigator.pushNamed(
+              context,
+              '/signin',
+            );
+          }
+        },
+        child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
@@ -174,60 +183,58 @@ class RegisterPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16.0),
-                BlocConsumer<RegisterBloc, RegisterState>(
-                  listener: (context, state) {
-                    if (state is RegisterSuccess) {
-                      Navigator.pushNamed(context, '/signin');
-                    } else if (state is RegisterError) {
+                ElevatedButton(
+                  onPressed: () {
+                    final name = nameController.text;
+                    final email = emailController.text;
+                    final password = passwordController.text;
+                    final confirmPassword = confirmPasswordController.text;
+
+                    // Password validation
+                    if (password.length < 6) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.message)),
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    return ElevatedButton(
-                      onPressed: state is RegisterLoading
-                          ? null
-                          : () {
-                              if (passwordController.text ==
-                                  confirmPasswordController.text) {
-                                context.read<RegisterBloc>().add(
-                                      RegisterUserEvent(
-                                        name: nameController.text,
-                                        email: emailController.text,
-                                        password: passwordController.text,
-                                      ),
-                                    );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Passwords do not match'),
-                                  ),
-                                );
-                              }
-                            },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        backgroundColor:
-                            const Color.fromARGB(255, 54, 104, 255),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
+                        const SnackBar(
+                          content: Text(
+                              'Password must be at least 6 characters long.'),
                         ),
+                      );
+                      return;
+                    }
+
+                    // Confirm password validation
+                    if (password != confirmPassword) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Passwords do not match.'),
+                        ),
+                      );
+                      return;
+                    }
+
+                    // If validation passes, proceed with registration
+                    BlocProvider.of<RegisterBloc>(context).add(
+                      RegisterUserEvent(
+                        name: name,
+                        email: email,
+                        password: password,
                       ),
-                      child: state is RegisterLoading
-                          ? const CircularProgressIndicator(
-                              color: Colors.white,
-                            )
-                          : Text(
-                              'SIGN UP',
-                              style: GoogleFonts.poppins(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
                     );
                   },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    backgroundColor: const Color.fromARGB(255, 54, 104, 255),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  child: const Text(
+                    'SIGN UP',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 30.0),
                 Row(

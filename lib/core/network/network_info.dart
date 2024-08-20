@@ -10,8 +10,5 @@ class NetworkInfoImpl implements NetworkInfo {
   NetworkInfoImpl(this.connectionChecker);
 
   @override
-  Future<bool> get isConnected async {
-    // Ensure connectionChecker is not null and handle potential nullity.
-    return await connectionChecker.hasConnection;
-  }
+  Future<bool> get isConnected async => await connectionChecker.hasConnection;
 }

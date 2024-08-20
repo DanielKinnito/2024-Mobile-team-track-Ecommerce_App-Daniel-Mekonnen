@@ -16,7 +16,8 @@ class UserRepositoryImpl implements UserRepository {
   });
 
   @override
-  Future<Either<Failure, String>> loginUser(String email, String password) async {
+  Future<Either<Failure, String>> loginUser(
+      String email, String password) async {
     if (await networkInfo.isConnected) {
       try {
         final token = await remoteDataSource.loginUser(email, password);
@@ -34,10 +35,14 @@ class UserRepositoryImpl implements UserRepository {
       String email, String password, String name) async {
     if (await networkInfo.isConnected) {
       try {
-        final token = await remoteDataSource.registerUser(email, password, name);
-        return Right(token);
+        final id = await remoteDataSource.registerUser(email, password, name);
+        return Right(id);
       } on ServerException {
-        return const Left(ServerFailure('Failed to register'));
+        print('ServerException in registerUser');
+        return const Left(ServerFailure('Failed to register in repo impl'));
+      } catch (e) {
+        print('Unexpected error: $e');
+        return const Left(ServerFailure('Unexpected error occurred'));
       }
     } else {
       return const Left(ConnectionFailure('No internet connection'));
