@@ -71,7 +71,7 @@ class ProductHomePage extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 8.0), // Space between the row and the list
+            const SizedBox(height: 8.0),
             Expanded(
               child: BlocBuilder<ProductBloc, ProductState>(
                 builder: (context, state) {
