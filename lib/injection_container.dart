@@ -27,57 +27,72 @@ final sl = GetIt.instance;
 
 Future<void> init() async {
   //! Externals
-  var shared = await SharedPreferences.getInstance();
-  sl.registerLazySingleton<SharedPreferences>(() => shared);
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
   sl.registerLazySingleton<http.Client>(() => http.Client());
   sl.registerLazySingleton<InternetConnectionChecker>(
       () => InternetConnectionChecker());
-  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
+
+  // Network Info
+  sl.registerLazySingleton<NetworkInfo>(
+      () => NetworkInfoImpl(sl<InternetConnectionChecker>()));
 
   // Data Sources
   sl.registerLazySingleton<ProductRemoteDataSource>(
       () => ProductRemoteDataSourceImpl(
-            client: sl(),
-            sharedPreferences: shared,
+            client: sl<http.Client>(),
+            sharedPreferences: sl<SharedPreferences>(),
           ));
+
   sl.registerLazySingleton<ProductLocalDataSource>(
-      () => ProductLocalDataSourceImpl(sharedPreferences: sl()));
+      () => ProductLocalDataSourceImpl(sharedPreferences: sl<SharedPreferences>()));
+
   sl.registerLazySingleton<UserRemoteDataSource>(
-      () => UserRemoteDataSourceImpl(client: sl()));
+      () => UserRemoteDataSourceImpl(client: sl<http.Client>()));
 
   // Repositories
-  sl.registerLazySingleton<ProductRepository>(() => ProductRepositoryImpl(
-        remoteDataSource: sl(),
-        localDataSource: sl(),
-        networkInfo: sl(),
-      ));
-  sl.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(
-        remoteDataSource: sl(),
-        networkInfo: sl(),
-      ));
+  sl.registerLazySingleton<ProductRepository>(
+      () => ProductRepositoryImpl(
+            remoteDataSource: sl<ProductRemoteDataSource>(),
+            localDataSource: sl<ProductLocalDataSource>(),
+            networkInfo: sl<NetworkInfo>(),
+          ));
+
+  sl.registerLazySingleton<UserRepository>(
+      () => UserRepositoryImpl(
+            remoteDataSource: sl<UserRemoteDataSource>(),
+            networkInfo: sl<NetworkInfo>(),
+          ));
 
   // Use Cases
-  sl.registerLazySingleton<GetAllProducts>(() => GetAllProducts(sl()));
-  sl.registerLazySingleton<GetProduct>(() => GetProduct(sl()));
-  sl.registerLazySingleton<InsertProduct>(() => InsertProduct(sl()));
-  sl.registerLazySingleton<DeleteProduct>(() => DeleteProduct(sl()));
-  sl.registerLazySingleton<UpdateProduct>(() => UpdateProduct(sl()));
-  sl.registerLazySingleton<LoginUser>(() => LoginUser(userRepository: sl()));
-  sl.registerLazySingleton<RegisterUser>(() => RegisterUser(sl()));
+  sl.registerLazySingleton<GetAllProducts>(() => GetAllProducts(sl<ProductRepository>()));
+  sl.registerLazySingleton<GetProduct>(() => GetProduct(sl<ProductRepository>()));
+  sl.registerLazySingleton<InsertProduct>(() => InsertProduct(sl<ProductRepository>()));
+  sl.registerLazySingleton<DeleteProduct>(() => DeleteProduct(sl<ProductRepository>()));
+  sl.registerLazySingleton<UpdateProduct>(() => UpdateProduct(sl<ProductRepository>()));
+  
+  sl.registerLazySingleton<LoginUser>(() => LoginUser(userRepository: sl<UserRepository>()));
+  sl.registerLazySingleton<RegisterUser>(() => RegisterUser(sl<UserRepository>()));
+
   sl.registerLazySingleton<AuthFacadeImpl>(
-      () => AuthFacadeImpl(loginUseCase: sl(), registerUseCase: sl()));
+      () => AuthFacadeImpl(
+            loginUseCase: sl<LoginUser>(),
+            registerUseCase: sl<RegisterUser>(),
+          ));
 
   // BLoC
   sl.registerFactory(() => ProductBloc(
-        getAllProducts: sl(),
-        getProduct: sl(),
-        updateProduct: sl(),
-        deleteProduct: sl(),
-        insertProduct: sl(),
+        getAllProducts: sl<GetAllProducts>(),
+        getProduct: sl<GetProduct>(),
+        updateProduct: sl<UpdateProduct>(),
+        deleteProduct: sl<DeleteProduct>(),
+        insertProduct: sl<InsertProduct>(),
       ));
-  sl.registerFactory(() => RegisterBloc(registerUser: sl()));
+
+  sl.registerFactory(() => RegisterBloc(registerUser: sl<RegisterUser>()));
+
   sl.registerFactory(() => LoginBloc(
-        loginUser: sl(),
-        sharedPreferences: shared,
+        loginUser: sl<LoginUser>(),
+        sharedPreferences: sl<SharedPreferences>(),
       ));
 }

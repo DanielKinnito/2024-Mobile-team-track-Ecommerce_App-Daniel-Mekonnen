@@ -38,7 +38,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       },
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       final List<dynamic> productsJson = data['data'];
       return productsJson.map((json) => ProductModel.fromJson(json)).toList();
@@ -59,7 +59,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       },
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       return ProductModel.fromJson(data['data']);
     } else {
@@ -103,7 +103,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       body: json.encode(product.toJson()),
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       return ProductModel.fromJson(data['data']);
     } else {
@@ -123,7 +123,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       },
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       return response.body;
     } else {
       throw ServerException();
