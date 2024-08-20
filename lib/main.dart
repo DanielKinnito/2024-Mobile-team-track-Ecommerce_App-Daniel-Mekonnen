@@ -91,7 +91,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'features/product/domain/entities/product.dart';
+import 'features/product/presentation/bloc/product_bloc.dart';
+import 'features/product/presentation/pages/product_add_page.dart';
+import 'features/product/presentation/pages/product_details_page.dart';
 import 'features/product/presentation/pages/product_home_page.dart';
+import 'features/product/presentation/pages/product_search_page.dart';
+import 'features/product/presentation/pages/product_update_page.dart';
 import 'features/user/domain/usecase/login_user.dart';
 import 'features/user/domain/usecase/register_user.dart';
 import 'features/user/presentation/bloc/login_bloc.dart';
@@ -100,11 +106,11 @@ import 'features/user/presentation/pages/login_page.dart';
 import 'features/user/presentation/pages/register_page.dart';
 import 'features/user/presentation/pages/splash_screen.dart';
 import 'injection_container.dart' as di;
+import 'injection_container.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
-
   runApp(const MyApp());
 }
 
@@ -126,6 +132,15 @@ class MyApp extends StatelessWidget {
             sharedPreferences: di.sl<SharedPreferences>(),
           ),
         ),
+        BlocProvider(
+          create: (context) => ProductBloc(
+            getAllProducts: sl(),
+            getProduct: sl(),
+            updateProduct: sl(),
+            deleteProduct: sl(),
+            insertProduct: sl(),
+          ),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -141,6 +156,26 @@ class MyApp extends StatelessWidget {
           '/signin': (context) => const LoginPage(),
           '/signup': (context) => const RegisterPage(),
           '/home': (context) => const ProductHomePage(),
+          '/add': (context) => const ProductAddPage(),
+          '/update': (context) => const ProductUpdatePage(
+                product: Product(
+                  imageUrl: '',
+                  id: '',
+                  name: '',
+                  description: '',
+                  price: 0.0,
+                ),
+              ),
+          '/details': (context) => const ProductDetailsPage(
+                product: Product(
+                  imageUrl: '',
+                  id: '',
+                  name: '',
+                  description: '',
+                  price: 0.0,
+                ),
+              ),
+          '/search': (context) => const ProductSearchPage(),
         },
       ),
     );

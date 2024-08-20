@@ -15,22 +15,23 @@ class ProductAddPage extends StatefulWidget {
   const ProductAddPage({super.key, this.product});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ProductAddPageState createState() => _ProductAddPageState();
 }
 
 class _ProductAddPageState extends State<ProductAddPage> {
-  final TextEditingController _name = TextEditingController();
-  final TextEditingController _description = TextEditingController();
-  final TextEditingController _price = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
   File? _selectedImage;
 
   @override
   void initState() {
     super.initState();
     if (widget.product != null) {
-      _name.text = widget.product!.name;
-      _description.text = widget.product!.description;
-      _price.text = widget.product!.price.toString();
+      _nameController.text = widget.product!.name;
+      _descriptionController.text = widget.product!.description;
+      _priceController.text = widget.product!.price.toString();
       _selectedImage = File(widget.product!.imageUrl);
     }
   }
@@ -42,26 +43,29 @@ class _ProductAddPageState extends State<ProductAddPage> {
   }
 
   void _submitProduct() {
-    if (_name.text.isEmpty ||
-        _description.text.isEmpty ||
-        _price.text.isEmpty ||
+    if (_nameController.text.isEmpty ||
+        _descriptionController.text.isEmpty ||
+        _priceController.text.isEmpty ||
         _selectedImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text('Please fill all fields and select an image')),
       );
+      return;
     }
 
     final product = ProductModel(
       id: widget.product?.id ?? '',
-      name: _name.text,
-      description: _description.text,
-      price: double.parse(_price.text),
+      name: _nameController.text,
+      description: _descriptionController.text,
+      price: double.parse(_priceController.text),
       imageUrl: _selectedImage!.path,
     );
 
     BlocProvider.of<ProductBloc>(context).add(
-      CreateProductEvent(product, _selectedImage!.path),
+      widget.product == null
+          ? CreateProductEvent(product, _selectedImage!.path)
+          : UpdateProductEvent(product),
     );
   }
 
@@ -83,9 +87,9 @@ class _ProductAddPageState extends State<ProductAddPage> {
             onPressed: () => Navigator.pop(context),
           ),
           centerTitle: true,
-          title: const Text(
-            'Add Product',
-            style: TextStyle(
+          title: Text(
+            widget.product == null ? 'Add Product' : 'Update Product',
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
@@ -93,11 +97,12 @@ class _ProductAddPageState extends State<ProductAddPage> {
         ),
         body: BlocListener<ProductBloc, ProductState>(
           listener: (context, state) {
-            if (state is AddPageSubmittedState) {
+            if (state is AddPageSubmittedState ||
+                state is UpdatePageSubmittedState) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Product added successfully')),
+                const SnackBar(content: Text('Product saved successfully')),
               );
-              context.read<ProductBloc>().add(LoadAllProductEvent());
+              context.read<ProductBloc>().add(const LoadAllProductEvent());
               Navigator.pushNamed(context, '/');
             } else if (state is ErrorProductState) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -120,7 +125,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
                   const Text('Name', style: TextStyle(fontSize: 16)),
                   const SizedBox(height: 8),
                   TextField(
-                    controller: _name,
+                    controller: _nameController,
                     decoration: InputDecoration(
                       fillColor: const Color.fromRGBO(243, 243, 243, 1),
                       filled: true,
@@ -139,11 +144,10 @@ class _ProductAddPageState extends State<ProductAddPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const SizedBox(height: 16),
                   const Text('Price', style: TextStyle(fontSize: 16)),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   TextField(
-                    controller: _price,
+                    controller: _priceController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       fillColor: const Color.fromRGBO(243, 243, 243, 1),
@@ -164,12 +168,11 @@ class _ProductAddPageState extends State<ProductAddPage> {
                       suffixStyle: const TextStyle(color: Colors.black),
                     ),
                   ),
-                  const SizedBox(height: 8),
                   const SizedBox(height: 16),
                   const Text('Description', style: TextStyle(fontSize: 16)),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   TextField(
-                    controller: _description,
+                    controller: _descriptionController,
                     maxLines: 6,
                     decoration: InputDecoration(
                       fillColor: const Color.fromRGBO(243, 243, 243, 1),
@@ -189,12 +192,6 @@ class _ProductAddPageState extends State<ProductAddPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // AddButton(
-                  //   nameController: _name,
-                  //   priceController: _price,
-                  //   descriptionController: _description,
-                  //   selectedImage: _selectedImage,
-                  // ),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -207,20 +204,10 @@ class _ProductAddPageState extends State<ProductAddPage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: () {
-                        final newProduct = ProductModel(
-                          id: widget.product?.id ?? '',
-                          name: _name.text,
-                          description: _description.text,
-                          price: double.parse(_price.text),
-                          imageUrl: _selectedImage!.path,
-                        );
-                        var addbloc = BlocProvider.of<ProductBloc>(context);
-                        addbloc.add(CreateProductEvent(newProduct, _selectedImage!.path));
-                      },
-                      child: const Text(
-                        'ADD',
-                        style: TextStyle(
+                      onPressed: _submitProduct,
+                      child: Text(
+                        widget.product == null ? 'ADD' : 'UPDATE',
+                        style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
