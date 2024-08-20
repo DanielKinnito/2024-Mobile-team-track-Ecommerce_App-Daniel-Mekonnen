@@ -29,7 +29,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         },
         (token) async {
           // Store the access token in SharedPreferences
-          await sharedPreferences.setString('access_token', token as String);
+          await sharedPreferences.setString('access_token', token);
           
           emit(LoginSuccess(token: token));
         },

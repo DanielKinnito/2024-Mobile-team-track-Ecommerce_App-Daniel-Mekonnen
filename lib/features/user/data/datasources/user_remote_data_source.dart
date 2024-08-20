@@ -22,9 +22,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
       body: json.encode({'email': email, 'password': password}),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       final Map<String, dynamic> data = json.decode(response.body);
-      return data['access_token']; // Assuming the API returns the token in the 'token' field
+      return data['data']['access_token']; // Assuming the API returns the token in the 'token' field
     } else {
       throw ServerException();
     }
