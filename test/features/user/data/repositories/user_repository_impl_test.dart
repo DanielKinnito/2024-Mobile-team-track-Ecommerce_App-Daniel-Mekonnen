@@ -40,7 +40,7 @@ void main() {
         final result = await repository.loginUser(email, password);
 
         // Assert
-        expect(result, equals(Right(token)));
+        expect(result, equals(const Right(token)));
       });
 
       test(
@@ -91,7 +91,7 @@ void main() {
         final result = await repository.registerUser(email, password, name);
 
         // Assert
-        expect(result, equals(Right(userId)));
+        expect(result, equals(const Right(userId)));
       });
 
       test(
