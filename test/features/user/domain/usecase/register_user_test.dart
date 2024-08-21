@@ -18,11 +18,11 @@ void main() {
   });
 
   var user =
-      const User(email: 'email@example.com', password: 'password', name: 'John Doe');
+      const User(email: 'email@example.com', password: 'password', name: 'John Doe', id: '');
   RegisterParams params = RegisterParams(
     email: user.email,
     password: user.password,
-    name: user.name ?? '',
+    name: user.name,
   );
 
   group('Register User', () {
@@ -30,7 +30,7 @@ void main() {
       // Arrange
       when(mockUserRepository.registerUser(
               params.email, params.password, params.name))
-          .thenAnswer((_) async => Right(user));
+          .thenAnswer((_) async => Right(user as String));
 
       // Act
       final result = await usecase(params);

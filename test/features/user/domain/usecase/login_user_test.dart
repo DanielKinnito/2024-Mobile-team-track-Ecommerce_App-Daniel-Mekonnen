@@ -14,10 +14,10 @@ void main() {
   late UserRepository mockUserRepository;
   setUp(() {
     mockUserRepository = MockUserRepository();
-    usecase = LoginUser(mockUserRepository);
+    usecase = LoginUser(userRepository: mockUserRepository);
   });
 
-  var user = const User(email: 'email', password: 'password');
+  var user = const User(email: 'email', password: 'password', id: '', name: '');
   String accessToken = 'granted';
   LoginParams params = LoginParams(email: user.email, password: user.password);
 
