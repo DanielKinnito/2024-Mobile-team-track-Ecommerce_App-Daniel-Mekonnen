@@ -1,9 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class AppBarTitle extends StatelessWidget {
+class AppBarTitle extends StatefulWidget {
   const AppBarTitle({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _AppBarTitleState createState() => _AppBarTitleState();
+}
+
+class _AppBarTitleState extends State<AppBarTitle> {
+  String userName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userName = prefs.getString('userName') ?? 'User'; // Fallback if name is not found
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +55,7 @@ class AppBarTitle extends StatelessWidget {
               ),
             ),
             Text(
-              'Daniel',
+              userName,  // Display the fetched user name
               style: GoogleFonts.sora(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,

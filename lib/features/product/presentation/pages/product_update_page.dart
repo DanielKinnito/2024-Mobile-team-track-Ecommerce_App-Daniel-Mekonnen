@@ -16,16 +16,16 @@ class ProductUpdatePage extends StatefulWidget {
 }
 
 class _ProductUpdatePageState extends State<ProductUpdatePage> {
-  final TextEditingController _name = TextEditingController();
-  final TextEditingController _description = TextEditingController();
-  final TextEditingController _price = TextEditingController();
+  late final TextEditingController _name;
+  late final TextEditingController _description;
+  late final TextEditingController _price;
 
   @override
   void initState() {
     super.initState();
-    _name.text = widget.product.name;
-    _description.text = widget.product.description;
-    _price.text = widget.product.price.toString();
+    _name = TextEditingController(text: widget.product.name);
+    _description = TextEditingController(text: widget.product.description);
+    _price = TextEditingController(text: widget.product.price.toString());
   }
 
   @override
@@ -34,32 +34,6 @@ class _ProductUpdatePageState extends State<ProductUpdatePage> {
     _description.dispose();
     _price.dispose();
     super.dispose();
-  }
-
-  void _submitProduct() {
-    if (_name.text.isEmpty ||
-        _description.text.isEmpty ||
-        _price.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields')),
-      );
-      return;
-    }
-
-    final product = ProductModel(
-      id: widget.product.id ?? '',
-      name: _name.text,
-      description: _description.text,
-      price: double.parse(_price.text),
-      imageUrl: widget.product.imageUrl,
-    );
-
-    BlocProvider.of<ProductBloc>(context).add(UpdateProductEvent(product));
-  }
-
-  void _deleteProduct() {
-    BlocProvider.of<ProductBloc>(context)
-        .add(DeleteProductEvent(widget.product.id));
   }
 
   @override
@@ -159,7 +133,7 @@ class _ProductUpdatePageState extends State<ProductUpdatePage> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: _description,
-                  maxLines: 6,
+                  maxLines: 4,
                   decoration: InputDecoration(
                     fillColor: const Color.fromRGBO(243, 243, 243, 1),
                     filled: true,
@@ -177,50 +151,64 @@ class _ProductUpdatePageState extends State<ProductUpdatePage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 54, 104, 255),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        final name = _name.text;
+                        final description = _description.text;
+                        final price = double.tryParse(_price.text);
+                        if (name.isEmpty ||
+                            description.isEmpty ||
+                            price == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please fill in all fields'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        final updatedProduct = ProductModel(
+                          id: widget.product?.id ?? '',
+                          name: name,
+                          description: description,
+                          price: price,
+                          imageUrl: widget.product.imageUrl,
+                        );
+
+                        BlocProvider.of<ProductBloc>(context).add(
+                          UpdateProductEvent(updatedProduct),
+                        );
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Product Updated successfully')),
+                        );
+                        // Navigate to home page and refresh it
+                        Navigator.popUntil(
+                            context, ModalRoute.withName('/home'));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromARGB(255, 54, 104, 255),
                       ),
+                      child: const Text('Update Product',
+                          style: TextStyle(color: Colors.white)),
                     ),
-                    onPressed: _submitProduct,
-                    child: const Text(
-                      'UPDATE',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                    ElevatedButton(
+                      onPressed: () {
+                        BlocProvider.of<ProductBloc>(context)
+                            .add(DeleteProductEvent(widget.product.id));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.red,
                       ),
-                      textAlign: TextAlign.center,
+                      child: const Text('Delete Product'),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.red,
-                      side: const BorderSide(color: Colors.red),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    onPressed: _deleteProduct,
-                    child: const Text(
-                      'DELETE',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
+                  ],
                 ),
               ],
             ),

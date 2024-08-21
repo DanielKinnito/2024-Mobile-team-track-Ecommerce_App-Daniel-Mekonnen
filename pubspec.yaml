@@ -55,6 +55,7 @@ dependencies:
   path_provider: ^2.1.4
   http: ^1.2.2
   internet_connection_checker: ^1.0.0+1
+  http_parser: ^4.0.2
 
 dev_dependencies:
   flutter_test:

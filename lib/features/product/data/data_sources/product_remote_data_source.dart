@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/exception/exception.dart';
@@ -75,19 +76,44 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     final token = await _getToken();
     if (token == null) throw AuthenticationException();
 
-    final response = await client.post(
+    final request = http.MultipartRequest(
+      'POST',
       Uri.parse(Urls.insertProduct()),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: json.encode(product.toJson()),
     );
 
+    // Add headers
+    request.headers.addAll({
+      'Authorization': 'Bearer $token',
+    });
+
+    // Add fields
+    request.fields['name'] = product.name;
+    request.fields['description'] = product.description;
+    request.fields['price'] = product.price.toString();
+
+    // Add file
+    if (product.imageUrl.isNotEmpty) {
+      // Ensure the path is correct and the file exists
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image', // Ensure this matches the server's expected field name
+          product.imageUrl,
+          contentType: MediaType('image', 'jpeg'), // Adjust MIME type as needed
+        ),
+      );
+    }
+
+    // Send request
+    final response = await request.send();
+    final responseBody = await response.stream.bytesToString();
+
     if (response.statusCode == 201) {
-      final Map<String, dynamic> data = json.decode(response.body);
+      final Map<String, dynamic> data = json.decode(responseBody);
       return ProductModel.fromJson(data['data']);
     } else {
+      // Print detailed error message
+      print('Failed to insert product. Status Code: ${response.statusCode}');
+      print('Response Body: $responseBody');
       throw ServerException();
     }
   }

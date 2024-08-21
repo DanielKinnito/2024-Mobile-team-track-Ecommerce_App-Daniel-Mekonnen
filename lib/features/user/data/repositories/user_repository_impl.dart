@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/exception/exception.dart';
 import '../../../../core/failure/failure.dart';
@@ -46,6 +47,21 @@ class UserRepositoryImpl implements UserRepository {
       }
     } else {
       return const Left(ConnectionFailure('No internet connection'));
+    }
+  }
+
+  @override
+  Future<void> fetchAndSaveUserName() async {
+    try {
+      // Fetch the user's name from the remote data source
+      final userName = await remoteDataSource.fetchUserName();
+
+      // Save the name in SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('userName', userName);
+    } catch (e) {
+      // Handle errors (e.g., log them or rethrow)
+      print('Error: $e');
     }
   }
 }

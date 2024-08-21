@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../injection_container.dart';
+import '../../../user/domain/usecase/logout_user.dart';
+import '../../../user/presentation/bloc/logout_bloc.dart';
+import '../../../user/presentation/pages/login_page.dart';
 import '../bloc/product_bloc.dart';
 import '../widgets/app_bar_title.dart';
 import '../widgets/custom_icon_button.dart';
@@ -42,9 +45,10 @@ class ProductHomePage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: IconButtonWithBg(
-                icon: Icons.notifications_outlined,
-                onPressed: () {
-                  // Handle notifications button press
+                icon: Icons.logout_outlined,
+                onPressed: () async {
+                  LogOut(sl());
+                  Navigator.pushReplacementNamed(context, '/signin');
                 },
               ),
             ),

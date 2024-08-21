@@ -118,8 +118,9 @@ class ProductSearchPage extends StatelessWidget {
                     );
                   } else if (state is ErrorProductState) {
                     return Center(child: Text(state.message));
+                  } else {
+                    return const Center(child: Text('Failed to load products'));
                   }
-                  return Container();
                 },
               ),
             ),

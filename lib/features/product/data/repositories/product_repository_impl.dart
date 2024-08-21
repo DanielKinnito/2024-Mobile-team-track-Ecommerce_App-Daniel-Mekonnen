@@ -71,7 +71,7 @@ class ProductRepositoryImpl implements ProductRepository {
         final insertedProduct = insertedProductModel.toEntity();
         return Right(insertedProduct);
       } on ServerException catch (e) {
-        return Left(ServerFailure('$e.message'));
+        return const Left(ServerFailure('Failed to insert product on the server.'));
       }
     } else {
       return const Left(ConnectionFailure('No internet connection'));

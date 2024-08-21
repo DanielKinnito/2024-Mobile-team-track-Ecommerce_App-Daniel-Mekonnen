@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../injection_container.dart';
+import '../../domain/repositories/user_repository.dart';
 import '../bloc/login_bloc.dart';
 import '../widgets/build_textfield.dart';
 import '../widgets/logo.dart'; // Ensure correct import
@@ -20,6 +22,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final userRepository = sl<UserRepository>();
     return Scaffold(
       backgroundColor: Colors.white,
       body: BlocListener<LoginBloc, LoginState>(
@@ -31,6 +34,8 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
           } else if (state is LoginSuccess) {
+            // Save the user's name to SharedPreferences
+            userRepository.fetchAndSaveUserName();
             Navigator.pushNamed(
               context,
               '/home',

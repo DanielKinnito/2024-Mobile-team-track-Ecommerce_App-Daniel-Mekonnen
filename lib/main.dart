@@ -101,6 +101,7 @@ import 'features/product/presentation/pages/product_update_page.dart';
 import 'features/user/domain/usecase/login_user.dart';
 import 'features/user/domain/usecase/register_user.dart';
 import 'features/user/presentation/bloc/login_bloc.dart';
+import 'features/user/presentation/bloc/logout_bloc.dart';
 import 'features/user/presentation/bloc/register_bloc.dart';
 import 'features/user/presentation/pages/login_page.dart';
 import 'features/user/presentation/pages/register_page.dart';
@@ -140,6 +141,9 @@ class MyApp extends StatelessWidget {
             deleteProduct: sl(),
             insertProduct: sl(),
           ),
+        ),
+        BlocProvider(
+          create: (context) => LogoutBloc(sl()),
         ),
       ],
       child: MaterialApp(

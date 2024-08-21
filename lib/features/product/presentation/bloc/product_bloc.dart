@@ -19,7 +19,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final DeleteProduct deleteProduct;
   final InsertProduct insertProduct;
 
-  List<Product> orginal = [];
+  List<Product> originalProducts = [];
 
   ProductBloc({
     required this.getAllProducts,
@@ -37,6 +37,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           emit(ErrorProductState(failure.message));
         },
         (products) {
+          originalProducts = products; // Save products for search
           print('Products loaded: $products');
           emit(LoadedAllProductsState(products));
         },
@@ -82,25 +83,26 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         (productId) => emit(DeletedProductState(productId)),
       );
     });
+
     on<SearchProductsEvent>(_onSearchProducts);
   }
+
   Future<void> _onSearchProducts(
       SearchProductsEvent event, Emitter<ProductState> emit) async {
     emit(LoadingProductState());
 
-    final result = orginal;
-    if (event.query.trim() == '') {
-      emit(SearchPageLoadedState(orginal));
+    final query = event.query.trim().toLowerCase();
+    if (query.isEmpty) {
+      emit(SearchPageLoadedState(products: originalProducts));
+      return;
     }
 
-    final filteredProducts = result
+    final filteredProducts = originalProducts
         .where((product) => product.name
             .trim()
             .toLowerCase()
-            .contains(event.query.trim().toLowerCase()))
+            .contains(query))
         .toList();
-    emit(SearchPageLoadedState(filteredProducts));
+    emit(SearchPageLoadedState(products: filteredProducts));
   }
-
-  Null get products => null;
 }

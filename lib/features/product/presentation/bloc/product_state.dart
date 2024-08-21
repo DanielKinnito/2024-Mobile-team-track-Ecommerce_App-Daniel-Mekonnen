@@ -62,13 +62,11 @@ class UpdatePageSubmittedState extends ProductState {
   @override
   List<Object> get props => [product];
 }
-final class SearchPageLoadedState extends ProductState {
+class SearchPageLoadedState extends ProductState {
   final List<Product> products;
 
-  const SearchPageLoadedState(this.products);
+  const SearchPageLoadedState({required this.products});
 
   @override
   List<Object> get props => [products];
-
-  Null get query => null;
 }

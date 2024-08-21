@@ -71,7 +71,7 @@ class ProductModel extends Product {
       'id': id,
       'name': name,
       'description': description,
-      'price': price,
+      'price': price.toString(),
       'imageUrl': imageUrl,
     };
   }

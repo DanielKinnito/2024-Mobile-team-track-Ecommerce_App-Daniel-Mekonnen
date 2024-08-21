@@ -63,16 +63,13 @@ class _ProductAddPageState extends State<ProductAddPage> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Product added successfully')),
             );
-            // Navigate to details page with the newly added product
-            Navigator.pushReplacementNamed(context, '/product-details',
-                arguments: state.product);
+            // Navigate to home page and refresh it
+            Navigator.popUntil(context, ModalRoute.withName('/home'));
           } else if (state is UpdatePageSubmittedState) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Product updated successfully')),
             );
-            // Navigate to details page with the updated product
-            Navigator.pushReplacementNamed(context, '/product-details',
-                arguments: state.product);
+            Navigator.popUntil(context, ModalRoute.withName('/home'));
           } else if (state is ErrorProductState) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),
@@ -142,8 +139,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
                   height: 50,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color.fromARGB(255, 54, 104, 255),
+                      backgroundColor: const Color.fromARGB(255, 54, 104, 255),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -154,7 +150,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
                       final description = _descriptionController.text;
                       final price = double.tryParse(_priceController.text);
                       final imageUrl = _selectedImage?.path ?? '';
-    
+
                       if (name.isEmpty ||
                           description.isEmpty ||
                           price == null) {
@@ -165,7 +161,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
                         );
                         return;
                       }
-    
+
                       final product = ProductModel(
                         id: widget.product?.id ?? '',
                         name: name,
@@ -173,10 +169,16 @@ class _ProductAddPageState extends State<ProductAddPage> {
                         price: price,
                         imageUrl: imageUrl,
                       );
-    
+
                       BlocProvider.of<ProductBloc>(context).add(
                         CreateProductEvent(product, imageUrl),
                       );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Product added successfully')),
+                      );
+                      // Navigate to home page and refresh it
+                      Navigator.popUntil(context, ModalRoute.withName('/home'));
                     },
                     child: Text(
                       widget.product == null ? 'ADD' : 'UPDATE',
