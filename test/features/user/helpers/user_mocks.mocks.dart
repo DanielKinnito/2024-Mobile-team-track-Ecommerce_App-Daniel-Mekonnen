@@ -4,21 +4,24 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i6;
-import 'dart:convert' as _i11;
-import 'dart:typed_data' as _i13;
+import 'dart:convert' as _i13;
+import 'dart:typed_data' as _i14;
 
 import 'package:dartz/dartz.dart' as _i2;
 import 'package:http/http.dart' as _i4;
 import 'package:internet_connection_checker/internet_connection_checker.dart'
     as _i3;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i12;
+import 'package:mockito/src/dummies.dart' as _i11;
 import 'package:myapp/core/failure/failure.dart' as _i7;
-import 'package:myapp/core/network/network_info.dart' as _i9;
-import 'package:myapp/features/user/domain/entities/user.dart' as _i8;
+import 'package:myapp/core/network/network_info.dart' as _i8;
+import 'package:myapp/features/user/data/datasources/user_local_data_source.dart'
+    as _i12;
+import 'package:myapp/features/user/data/datasources/user_remote_data_source.dart'
+    as _i10;
 import 'package:myapp/features/user/domain/repositories/user_repository.dart'
     as _i5;
-import 'package:shared_preferences/src/shared_preferences_legacy.dart' as _i10;
+import 'package:shared_preferences/shared_preferences.dart' as _i9;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -120,7 +123,7 @@ class MockUserRepository extends _i1.Mock implements _i5.UserRepository {
       ) as _i6.Future<_i2.Either<_i7.Failure, String>>);
 
   @override
-  _i6.Future<_i2.Either<_i7.Failure, _i8.User>> registerUser(
+  _i6.Future<_i2.Either<_i7.Failure, String>> registerUser(
     String? email,
     String? password,
     String? name,
@@ -134,8 +137,8 @@ class MockUserRepository extends _i1.Mock implements _i5.UserRepository {
             name,
           ],
         ),
-        returnValue: _i6.Future<_i2.Either<_i7.Failure, _i8.User>>.value(
-            _FakeEither_0<_i7.Failure, _i8.User>(
+        returnValue: _i6.Future<_i2.Either<_i7.Failure, String>>.value(
+            _FakeEither_0<_i7.Failure, String>(
           this,
           Invocation.method(
             #registerUser,
@@ -146,13 +149,23 @@ class MockUserRepository extends _i1.Mock implements _i5.UserRepository {
             ],
           ),
         )),
-      ) as _i6.Future<_i2.Either<_i7.Failure, _i8.User>>);
+      ) as _i6.Future<_i2.Either<_i7.Failure, String>>);
+
+  @override
+  _i6.Future<void> fetchAndSaveUserName() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchAndSaveUserName,
+          [],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
 }
 
 /// A class which mocks [NetworkInfo].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkInfo extends _i1.Mock implements _i9.NetworkInfo {
+class MockNetworkInfo extends _i1.Mock implements _i8.NetworkInfo {
   MockNetworkInfo() {
     _i1.throwOnMissingStub(this);
   }
@@ -167,7 +180,7 @@ class MockNetworkInfo extends _i1.Mock implements _i9.NetworkInfo {
 /// A class which mocks [SharedPreferences].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockSharedPreferences extends _i1.Mock implements _i10.SharedPreferences {
+class MockSharedPreferences extends _i1.Mock implements _i9.SharedPreferences {
   MockSharedPreferences() {
     _i1.throwOnMissingStub(this);
   }
@@ -439,6 +452,104 @@ class MockInternetConnectionChecker extends _i1.Mock
       ) as _i6.Future<_i3.AddressCheckResult>);
 }
 
+/// A class which mocks [UserRemoteDataSource].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockUserRemoteDataSource extends _i1.Mock
+    implements _i10.UserRemoteDataSource {
+  MockUserRemoteDataSource() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i6.Future<String> loginUser(
+    String? email,
+    String? password,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #loginUser,
+          [
+            email,
+            password,
+          ],
+        ),
+        returnValue: _i6.Future<String>.value(_i11.dummyValue<String>(
+          this,
+          Invocation.method(
+            #loginUser,
+            [
+              email,
+              password,
+            ],
+          ),
+        )),
+      ) as _i6.Future<String>);
+
+  @override
+  _i6.Future<String> registerUser(
+    String? email,
+    String? password,
+    String? name,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #registerUser,
+          [
+            email,
+            password,
+            name,
+          ],
+        ),
+        returnValue: _i6.Future<String>.value(_i11.dummyValue<String>(
+          this,
+          Invocation.method(
+            #registerUser,
+            [
+              email,
+              password,
+              name,
+            ],
+          ),
+        )),
+      ) as _i6.Future<String>);
+
+  @override
+  _i6.Future<String> fetchUserName() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchUserName,
+          [],
+        ),
+        returnValue: _i6.Future<String>.value(_i11.dummyValue<String>(
+          this,
+          Invocation.method(
+            #fetchUserName,
+            [],
+          ),
+        )),
+      ) as _i6.Future<String>);
+}
+
+/// A class which mocks [UserLocalDataSource].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockUserLocalDataSource extends _i1.Mock
+    implements _i12.UserLocalDataSource {
+  MockUserLocalDataSource() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i6.Future<void> deleteAccessToken() => (super.noSuchMethod(
+        Invocation.method(
+          #deleteAccessToken,
+          [],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+}
+
 /// A class which mocks [Client].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -494,7 +605,7 @@ class MockHttpClient extends _i1.Mock implements _i4.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i11.Encoding? encoding,
+    _i13.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -525,7 +636,7 @@ class MockHttpClient extends _i1.Mock implements _i4.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i11.Encoding? encoding,
+    _i13.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -556,7 +667,7 @@ class MockHttpClient extends _i1.Mock implements _i4.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i11.Encoding? encoding,
+    _i13.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -587,7 +698,7 @@ class MockHttpClient extends _i1.Mock implements _i4.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i11.Encoding? encoding,
+    _i13.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -624,7 +735,7 @@ class MockHttpClient extends _i1.Mock implements _i4.Client {
           [url],
           {#headers: headers},
         ),
-        returnValue: _i6.Future<String>.value(_i12.dummyValue<String>(
+        returnValue: _i6.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #read,
@@ -635,7 +746,7 @@ class MockHttpClient extends _i1.Mock implements _i4.Client {
       ) as _i6.Future<String>);
 
   @override
-  _i6.Future<_i13.Uint8List> readBytes(
+  _i6.Future<_i14.Uint8List> readBytes(
     Uri? url, {
     Map<String, String>? headers,
   }) =>
@@ -645,8 +756,8 @@ class MockHttpClient extends _i1.Mock implements _i4.Client {
           [url],
           {#headers: headers},
         ),
-        returnValue: _i6.Future<_i13.Uint8List>.value(_i13.Uint8List(0)),
-      ) as _i6.Future<_i13.Uint8List>);
+        returnValue: _i6.Future<_i14.Uint8List>.value(_i14.Uint8List(0)),
+      ) as _i6.Future<_i14.Uint8List>);
 
   @override
   _i6.Future<_i4.StreamedResponse> send(_i4.BaseRequest? request) =>
