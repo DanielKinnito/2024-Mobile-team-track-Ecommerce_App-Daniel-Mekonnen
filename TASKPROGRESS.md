@@ -39,9 +39,8 @@ A Flutter Mobile Application built for the 2024 A2SV Summer Internship in the mo
   
 ### Screenshots
 #### Authentication
-|-------------------------------------------|
+
 | Splash Screen | Login Page | Register Page|
-|---------------|------------|--------------|
 |---------------|------------|-------|------|
 |![Splash](https://github.com/user-attachments/assets/6d445f94-8208-4fff-b669-83f8a7982db4)|![Login](https://github.com/user-attachments/assets/7cd4b622-f4cc-4f2f-926f-d7ddb684da77)|![Register-1](https://github.com/user-attachments/assets/9a2ad953-e034-46c2-a05f-4e2fbf6f61e4)| ![Register-2](https://github.com/user-attachments/assets/15525c91-4094-4ce7-a5c6-8cd015350723)|
 
