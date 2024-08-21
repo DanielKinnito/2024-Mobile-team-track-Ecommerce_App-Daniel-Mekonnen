@@ -38,31 +38,19 @@ A Flutter Mobile Application built for the 2024 A2SV Summer Internship in the mo
 - Search Page ✔️
   
 ### Screenshots
-#### Splash Page
-- ![Splash](https://github.com/user-attachments/assets/6d445f94-8208-4fff-b669-83f8a7982db4)
+#### Authentication
+|-----------------------------------------------|
+| Splash Screen | Login Page | Register Page|
+|--------------------------------------------|
+|![Splash](https://github.com/user-attachments/assets/6d445f94-8208-4fff-b669-83f8a7982db4)|![Login](https://github.com/user-attachments/assets/7cd4b622-f4cc-4f2f-926f-d7ddb684da77)|![Register-1](https://github.com/user-attachments/assets/9a2ad953-e034-46c2-a05f-4e2fbf6f61e4)| ![Register-2](https://github.com/user-attachments/assets/15525c91-4094-4ce7-a5c6-8cd015350723)|
+|------------------------------------------------------------------------|
 
-#### Login Page
-- ![Login](https://github.com/user-attachments/assets/7cd4b622-f4cc-4f2f-926f-d7ddb684da77)
-
-#### Register Page
-- ![Register-1](https://github.com/user-attachments/assets/9a2ad953-e034-46c2-a05f-4e2fbf6f61e4)
-- ![Register-2](https://github.com/user-attachments/assets/15525c91-4094-4ce7-a5c6-8cd015350723)
-
-
-#### Home Page
-- ![Home](https://github.com/user-attachments/assets/004e23d8-6be1-4ea8-8412-cf8f22cb8b7b)
-
-#### Details Page
-- ![Details](https://github.com/user-attachments/assets/5e419300-ce36-4591-889d-cfdeb39ad02e)
-
-#### Add/Update Page
-- ![Update](https://github.com/user-attachments/assets/ec12a423-be66-42ec-87c3-205c42fd5ae7)
-- ![Add-1](https://github.com/user-attachments/assets/f1d402ea-4415-4e51-b82a-c6367c36f298)
-- ![Add-2](https://github.com/user-attachments/assets/bdce1b9e-09d0-4558-8573-f82abccbae96)
-
-#### Search Page
-- ![image](https://github.com/user-attachments/assets/d53534ad-3a73-413a-9005-c742a4d04e29)
-- ![image](https://github.com/user-attachments/assets/f446ae93-98d2-46db-9b55-d6275e3ae538)
+#### Product 
+|-----------------------------------------------|
+| Home page| Details Page| Add Page| Update Page| Search Page|
+|-------------------------------------------------------------|
+|![Home](https://github.com/user-attachments/assets/004e23d8-6be1-4ea8-8412-cf8f22cb8b7b)|![Details](https://github.com/user-attachments/assets/5e419300-ce36-4591-889d-cfdeb39ad02e)|![Add-1](https://github.com/user-attachments/assets/f1d402ea-4415-4e51-b82a-c6367c36f298)|![Add-2](https://github.com/user-attachments/assets/bdce1b9e-09d0-4558-8573-f82abccbae96)|![Update](https://github.com/user-attachments/assets/ec12a423-be66-42ec-87c3-205c42fd5ae7)|![image](https://github.com/user-attachments/assets/d53534ad-3a73-413a-9005-c742a4d04e29)|![image](https://github.com/user-attachments/assets/f446ae93-98d2-46db-9b55-d6275e3ae538)|
+|-------------------------------------------------------------------|
 
 ## Task 7
 ### Implementing Navigation and Routing in a ecommerce Mobile App
