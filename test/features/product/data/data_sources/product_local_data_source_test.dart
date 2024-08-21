@@ -8,6 +8,8 @@ import 'package:myapp/features/product/data/models/product_model.dart';
 
 import '../../helpers/mocks.mocks.dart';
 
+// Mock SharedPreferences
+
 void main() {
   late ProductLocalDataSourceImpl dataSource;
   late MockSharedPreferences mockSharedPreferences;
@@ -17,221 +19,252 @@ void main() {
     dataSource = ProductLocalDataSourceImpl(sharedPreferences: mockSharedPreferences);
   });
 
-  const tProduct = ProductModel(
-    id: '6672752cbd218790438efdb0',
-    name: 'Anime website',
-    description: 'Explore anime characters.',
-    price: 123,
-    imageUrl:
-        'https://res.cloudinary.com/g5-mobile-track/image/upload/v1718777132/images/zxjhzrflkvsjutgbmr0f.jpg',
-  );
+  group('ProductLocalDataSourceImpl', () {
+    const tProduct = ProductModel(
+      id: '1',
+      name: 'Test Product',
+      description: 'Description of Test Product',
+      price: 10.0,
+      imageUrl: 'http://example.com/image.png',
+    );
 
-  final tProductJson = jsonEncode(tProduct.toJson());
+    final tProductList = [tProduct];
 
-  final tProductList = [
-    tProduct,
-    // Additional products...
-  ];
+    final tProductJson = json.encode(tProduct.toJson());
+    final tProductListJson = json.encode({'data': tProductList.map((p) => p.toJson()).toList()});
 
-  final tProductListJson = jsonEncode(
-    {'data': tProductList.map<Map<String, dynamic>>((product) => product.toJson()).toList()},
-  );
+    test('should return a list of products when getAllProducts is called', () async {
+      // Arrange
+      when(mockSharedPreferences.getString('products')).thenReturn(tProductListJson);
 
-  group('getAllProducts', () {
-    test('should return List<ProductModel> when data is cached', () async {
-      // arrange
-      when(mockSharedPreferences.getString('products'))
-          .thenReturn(tProductListJson);
-      // act
+      // Act
       final result = await dataSource.getAllProducts();
-      // assert
-      expect(result, equals(tProductList));
+
+      // Assert
+      expect(result, tProductList);
+      verify(mockSharedPreferences.getString('products')).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
     });
 
-    test('should throw CacheException when no data is cached', () async {
-      // arrange
-      when(mockSharedPreferences.getString('products'))
-          .thenReturn(null);
-      // act
+    test('should throw CacheException when getAllProducts returns null', () async {
+      // Arrange
+      when(mockSharedPreferences.getString('products')).thenReturn(null);
+
+      // Act
       final call = dataSource.getAllProducts;
-      // assert
+
+      // Assert
       expect(() => call(), throwsA(isA<CacheException>()));
-    });
-  });
-
-  group('getProduct', () {
-    test('should return ProductModel when data is cached', () async {
-      // arrange
-      when(mockSharedPreferences.getString('product_${tProduct.id}'))
-          .thenReturn(tProductJson);
-      // act
-      final result = await dataSource.getProduct(tProduct.id);
-      // assert
-      expect(result, equals(tProduct));
+      verify(mockSharedPreferences.getString('products')).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
     });
 
-    test('should throw CacheException when no data is cached', () async {
-      // arrange
-      when(mockSharedPreferences.getString('product_${tProduct.id}'))
-          .thenReturn(null);
-      // act
+    test('should return a product when getProduct is called', () async {
+      // Arrange
+      when(mockSharedPreferences.getString('product_1')).thenReturn(tProductJson);
+
+      // Act
+      final result = await dataSource.getProduct('1');
+
+      // Assert
+      expect(result, tProduct);
+      verify(mockSharedPreferences.getString('product_1')).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
+    });
+
+    test('should throw CacheException when getProduct returns null', () async {
+      // Arrange
+      when(mockSharedPreferences.getString('product_1')).thenReturn(null);
+
+      // Act
       final call = dataSource.getProduct;
-      // assert
-      expect(() => call(tProduct.id), throwsA(isA<CacheException>()));
-    });
-  });
 
-  group('insertProduct', () {
-    test('should return ProductModel when product is inserted', () async {
-      // arrange
-      when(mockSharedPreferences.setString('product_${tProduct.id}', tProductJson))
-          .thenAnswer((_) async => true);
-      // act
+      // Assert
+      expect(() => call('1'), throwsA(isA<CacheException>()));
+      verify(mockSharedPreferences.getString('product_1')).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
+    });
+
+    test('should return the product when insertProduct is called', () async {
+      // Arrange
+      when(mockSharedPreferences.setString('product_1', tProductJson)).thenAnswer((_) async => true);
+
+      // Act
       final result = await dataSource.insertProduct(tProduct);
-      // assert
-      expect(result, equals(tProduct));
+
+      // Assert
+      expect(result, tProduct);
+      verify(mockSharedPreferences.setString('product_1', tProductJson)).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
     });
 
-    test('should throw CacheException when insertion fails', () async {
-      // arrange
-      when(mockSharedPreferences.setString('product_${tProduct.id}', tProductJson))
-          .thenAnswer((_) async => false);
-      // act
+    test('should throw CacheException when insertProduct fails', () async {
+      // Arrange
+      when(mockSharedPreferences.setString('product_1', tProductJson)).thenAnswer((_) async => false);
+
+      // Act
       final call = dataSource.insertProduct;
-      // assert
-      expect(() => call(tProduct), throwsA(isA<CacheException>()));
-    });
-  });
 
-  group('updateProduct', () {
-    test('should return ProductModel when product is updated', () async {
-      // arrange
-      when(mockSharedPreferences.setString('product_${tProduct.id}', tProductJson))
-          .thenAnswer((_) async => true);
-      // act
+      // Assert
+      expect(() => call(tProduct), throwsA(isA<CacheException>()));
+      verify(mockSharedPreferences.setString('product_1', tProductJson)).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
+    });
+
+    test('should return the product when updateProduct is called', () async {
+      // Arrange
+      when(mockSharedPreferences.setString('product_1', tProductJson)).thenAnswer((_) async => true);
+
+      // Act
       final result = await dataSource.updateProduct(tProduct);
-      // assert
-      expect(result, equals(tProduct));
+
+      // Assert
+      expect(result, tProduct);
+      verify(mockSharedPreferences.setString('product_1', tProductJson)).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
     });
 
-    test('should throw CacheException when update fails', () async {
-      // arrange
-      when(mockSharedPreferences.setString('product_${tProduct.id}', tProductJson))
-          .thenAnswer((_) async => false);
-      // act
+    test('should throw CacheException when updateProduct fails', () async {
+      // Arrange
+      when(mockSharedPreferences.setString('product_1', tProductJson)).thenAnswer((_) async => false);
+
+      // Act
       final call = dataSource.updateProduct;
-      // assert
+
+      // Assert
       expect(() => call(tProduct), throwsA(isA<CacheException>()));
-    });
-  });
-
-  group('deleteProduct', () {
-    test('should return String when product is deleted', () async {
-      // arrange
-      when(mockSharedPreferences.remove('product_${tProduct.id}'))
-          .thenAnswer((_) async => true);
-      // act
-      final result = await dataSource.deleteProduct(tProduct.id);
-      // assert
-      expect(result, equals('Product deleted successfully'));
+      verify(mockSharedPreferences.setString('product_1', tProductJson)).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
     });
 
-    test('should throw CacheException when deletion fails', () async {
-      // arrange
-      when(mockSharedPreferences.remove('product_${tProduct.id}'))
-          .thenAnswer((_) async => false);
-      // act
+    test('should return success message when deleteProduct is called', () async {
+      // Arrange
+      when(mockSharedPreferences.remove('product_1')).thenAnswer((_) async => true);
+
+      // Act
+      final result = await dataSource.deleteProduct('1');
+
+      // Assert
+      expect(result, 'Product deleted successfully');
+      verify(mockSharedPreferences.remove('product_1')).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
+    });
+
+    test('should throw CacheException when deleteProduct fails', () async {
+      // Arrange
+      when(mockSharedPreferences.remove('product_1')).thenAnswer((_) async => false);
+
+      // Act
       final call = dataSource.deleteProduct;
-      // assert
-      expect(() => call(tProduct.id), throwsA(isA<CacheException>()));
-    });
-  });
 
-  group('cacheProducts', () {
-    test('should return the first ProductModel when caching succeeds', () async {
-      // arrange
-      when(mockSharedPreferences.setString('products', tProductListJson))
-          .thenAnswer((_) async => true);
-      // act
+      // Assert
+      expect(() => call('1'), throwsA(isA<CacheException>()));
+      verify(mockSharedPreferences.remove('product_1')).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
+    });
+
+    test('should return the first product when cacheProducts is called with non-empty list', () async {
+      // Arrange
+      when(mockSharedPreferences.setString('products', tProductListJson)).thenAnswer((_) async => true);
+
+      // Act
       final result = await dataSource.cacheProducts(tProductList);
-      // assert
-      expect(result, equals(tProduct));
+
+      // Assert
+      expect(result, tProduct);
+      verify(mockSharedPreferences.setString('products', tProductListJson)).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
     });
 
-    test('should throw CacheException when caching fails', () async {
-      // arrange
-      when(mockSharedPreferences.setString('products', tProductListJson))
-          .thenAnswer((_) async => false);
-      // act
+    test('should throw CacheException when cacheProducts fails', () async {
+      // Arrange
+      when(mockSharedPreferences.setString('products', tProductListJson)).thenAnswer((_) async => false);
+
+      // Act
       final call = dataSource.cacheProducts;
-      // assert
+
+      // Assert
       expect(() => call(tProductList), throwsA(isA<CacheException>()));
+      verify(mockSharedPreferences.setString('products', tProductListJson)).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
     });
-  });
 
-  group('cacheProduct', () {
-    test('should return ProductModel when caching succeeds', () async {
-      // arrange
-      when(mockSharedPreferences.setString('product_${tProduct.id}', tProductJson))
-          .thenAnswer((_) async => true);
-      // act
+    test('should return the product when cacheProduct is called', () async {
+      // Arrange
+      when(mockSharedPreferences.setString('product_1', tProductJson)).thenAnswer((_) async => true);
+
+      // Act
       final result = await dataSource.cacheProduct(tProduct);
-      // assert
-      expect(result, equals(tProduct));
+
+      // Assert
+      expect(result, tProduct);
+      verify(mockSharedPreferences.setString('product_1', tProductJson)).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
     });
 
-    test('should throw CacheException when caching fails', () async {
-      // arrange
-      when(mockSharedPreferences.setString('product_${tProduct.id}', tProductJson))
-          .thenAnswer((_) async => false);
-      // act
+    test('should throw CacheException when cacheProduct fails', () async {
+      // Arrange
+      when(mockSharedPreferences.setString('product_1', tProductJson)).thenAnswer((_) async => false);
+
+      // Act
       final call = dataSource.cacheProduct;
-      // assert
+
+      // Assert
       expect(() => call(tProduct), throwsA(isA<CacheException>()));
+      verify(mockSharedPreferences.setString('product_1', tProductJson)).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
     });
-  });
 
-  group('getLastProducts', () {
-    test('should return List<ProductModel> when data is cached', () async {
-      // arrange
-      when(mockSharedPreferences.getString('products'))
-          .thenReturn(tProductListJson);
-      // act
+    test('should return a list of products when getLastProducts is called', () async {
+      // Arrange
+      when(mockSharedPreferences.getString('products')).thenReturn(tProductListJson);
+
+      // Act
       final result = await dataSource.getLastProducts();
-      // assert
-      expect(result, equals(tProductList));
+
+      // Assert
+      expect(result, tProductList);
+      verify(mockSharedPreferences.getString('products')).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
     });
 
-    test('should throw CacheException when no data is cached', () async {
-      // arrange
-      when(mockSharedPreferences.getString('products'))
-          .thenReturn(null);
-      // act
+    test('should throw CacheException when getLastProducts returns null', () async {
+      // Arrange
+      when(mockSharedPreferences.getString('products')).thenReturn(null);
+
+      // Act
       final call = dataSource.getLastProducts;
-      // assert
+
+      // Assert
       expect(() => call(), throwsA(isA<CacheException>()));
-    });
-  });
-
-  group('getCachedProduct', () {
-    test('should return ProductModel when data is cached', () async {
-      // arrange
-      when(mockSharedPreferences.getString('product_${tProduct.id}'))
-          .thenReturn(tProductJson);
-      // act
-      final result = await dataSource.getCachedProduct(tProduct.id);
-      // assert
-      expect(result, equals(tProduct));
+      verify(mockSharedPreferences.getString('products')).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
     });
 
-    test('should throw CacheException when no data is cached', () async {
-      // arrange
-      when(mockSharedPreferences.getString('product_${tProduct.id}'))
-          .thenReturn(null);
-      // act
+    test('should return a product when getCachedProduct is called', () async {
+      // Arrange
+      when(mockSharedPreferences.getString('product_1')).thenReturn(tProductJson);
+
+      // Act
+      final result = await dataSource.getCachedProduct('1');
+
+      // Assert
+      expect(result, tProduct);
+      verify(mockSharedPreferences.getString('product_1')).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
+    });
+
+    test('should throw CacheException when getCachedProduct returns null', () async {
+      // Arrange
+      when(mockSharedPreferences.getString('product_1')).thenReturn(null);
+
+      // Act
       final call = dataSource.getCachedProduct;
-      // assert
-      expect(() => call(tProduct.id), throwsA(isA<CacheException>()));
+
+      // Assert
+      expect(() => call('1'), throwsA(isA<CacheException>()));
+      verify(mockSharedPreferences.getString('product_1')).called(1);
+      verifyNoMoreInteractions(mockSharedPreferences);
     });
   });
 }
