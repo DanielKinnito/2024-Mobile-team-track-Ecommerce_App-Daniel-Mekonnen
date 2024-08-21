@@ -32,7 +32,8 @@ class _ProductAddPageState extends State<ProductAddPage> {
       _nameController.text = widget.product!.name;
       _descriptionController.text = widget.product!.description;
       _priceController.text = widget.product!.price.toString();
-      _selectedImage = File(widget.product!.imageUrl);
+      _selectedImage =
+          File(widget.product!.imageUrl); // Load from URL if updating
     }
   }
 
@@ -59,12 +60,16 @@ class _ProductAddPageState extends State<ProductAddPage> {
       name: _nameController.text,
       description: _descriptionController.text,
       price: double.parse(_priceController.text),
-      imageUrl: _selectedImage!.path,
+      imageUrl: _selectedImage!.path, // Use path for upload
     );
 
+    // Dispatch appropriate event based on whether we're adding or updating
     BlocProvider.of<ProductBloc>(context).add(
       widget.product == null
-          ? CreateProductEvent(product, _selectedImage!.path)
+          ? CreateProductEvent(
+              product,
+              _selectedImage!
+                  .path) // Assuming this event handles the image upload as well
           : UpdateProductEvent(product),
     );
   }
@@ -89,21 +94,25 @@ class _ProductAddPageState extends State<ProductAddPage> {
           centerTitle: true,
           title: Text(
             widget.product == null ? 'Add Product' : 'Update Product',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
         ),
         body: BlocListener<ProductBloc, ProductState>(
           listener: (context, state) {
-            if (state is AddPageSubmittedState ||
-                state is UpdatePageSubmittedState) {
+            if (state is AddPageSubmittedState) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Product saved successfully')),
+                const SnackBar(content: Text('Product added successfully')),
               );
-              context.read<ProductBloc>().add(const LoadAllProductEvent());
-              Navigator.pushNamed(context, '/');
+              // Navigate to details page with the newly added product
+              Navigator.pushReplacementNamed(context, '/product-details',
+                  arguments: state.product);
+            } else if (state is UpdatePageSubmittedState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Product updated successfully')),
+              );
+              // Navigate to details page with the updated product
+              Navigator.pushReplacementNamed(context, '/product-details',
+                  arguments: state.product);
             } else if (state is ErrorProductState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.message)),
@@ -133,14 +142,6 @@ class _ProductAddPageState extends State<ProductAddPage> {
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -153,14 +154,6 @@ class _ProductAddPageState extends State<ProductAddPage> {
                       fillColor: const Color.fromRGBO(243, 243, 243, 1),
                       filled: true,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
                       ),
@@ -178,14 +171,6 @@ class _ProductAddPageState extends State<ProductAddPage> {
                       fillColor: const Color.fromRGBO(243, 243, 243, 1),
                       filled: true,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
                       ),
@@ -208,9 +193,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
                       child: Text(
                         widget.product == null ? 'ADD' : 'UPDATE',
                         style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
+                            fontSize: 14, fontWeight: FontWeight.w600),
                         textAlign: TextAlign.center,
                       ),
                     ),

@@ -34,7 +34,7 @@ class ProductModel extends Product {
     required this.description,
     required this.price,
     required this.imageUrl,
-  }) : super(imageUrl: '', id: '', name: '', description: '', price: 0.0);
+  }) : super(imageUrl: imageUrl, id: id, name: name, description: description, price: price);
 
   /// Converts this [ProductModel] into a [Product] entity.
   Product toEntity() {
@@ -51,6 +51,7 @@ class ProductModel extends Product {
   ///
   /// Throws a [ParsingException] if the JSON is invalid.
   factory ProductModel.fromJson(Map<String, dynamic> json) {
+    print('Parsing product JSON: $json');
     try {
       return ProductModel(
         id: json['id'] as String,
@@ -58,7 +59,7 @@ class ProductModel extends Product {
         description: json['description'] as String,
         price: (json['price'] as num).toDouble(),
         imageUrl: json['imageUrl'] as String,
-      );
+      );  
     } catch (e) {
       throw ParsingException();
     }

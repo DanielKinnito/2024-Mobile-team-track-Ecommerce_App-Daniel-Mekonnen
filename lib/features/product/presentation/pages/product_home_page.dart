@@ -15,13 +15,17 @@ class ProductHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ProductBloc(
-        getAllProducts: sl(),
-        getProduct: sl(),
-        updateProduct: sl(),
-        deleteProduct: sl(),
-        insertProduct: sl(),
-      ),
+      create: (context) {
+        final bloc = ProductBloc(
+          getAllProducts: sl(),
+          getProduct: sl(),
+          updateProduct: sl(),
+          deleteProduct: sl(),
+          insertProduct: sl(),
+        );
+        bloc.add(const LoadAllProductEvent());
+        return bloc;
+      },
       child: Scaffold(
         appBar: AppBar(
           leading: Container(

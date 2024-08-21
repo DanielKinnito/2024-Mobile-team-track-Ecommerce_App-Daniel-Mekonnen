@@ -32,8 +32,14 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(LoadingProductState());
       final productsOrFailure = await getAllProducts();
       productsOrFailure.fold(
-        (failure) => emit(ErrorProductState(failure.message)),
-        (products) => emit(LoadedAllProductsState(products)),
+        (failure) {
+          print('Error loading products: ${failure.message}');
+          emit(ErrorProductState(failure.message));
+        },
+        (products) {
+          print('Products loaded: $products');
+          emit(LoadedAllProductsState(products));
+        },
       );
     });
 

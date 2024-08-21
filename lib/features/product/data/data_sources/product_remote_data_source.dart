@@ -39,9 +39,11 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      final List<dynamic> productsJson = data['data'];
-      return productsJson.map((json) => ProductModel.fromJson(json)).toList();
+      final List<dynamic> jsonData = json.decode(response.body)['data'];
+      final List<ProductModel> products = jsonData
+          .map((productJson) => ProductModel.fromJson(productJson))
+          .toList();
+      return products;
     } else {
       throw ServerException();
     }
@@ -60,8 +62,9 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      return ProductModel.fromJson(data['data']);
+      final Map<String, dynamic> data = json.decode(response.body)['data'];
+      final product = ProductModel.fromJson(data);
+      return product;
     } else {
       throw ServerException();
     }
