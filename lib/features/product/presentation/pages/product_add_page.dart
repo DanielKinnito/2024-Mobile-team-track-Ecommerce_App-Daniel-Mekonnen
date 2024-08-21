@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../injection_container.dart';
 import '../../data/models/product_model.dart';
 import '../../domain/entities/product.dart';
 import '../bloc/product_bloc.dart';
@@ -43,163 +42,151 @@ class _ProductAddPageState extends State<ProductAddPage> {
     });
   }
 
-  void _submitProduct() {
-    if (_nameController.text.isEmpty ||
-        _descriptionController.text.isEmpty ||
-        _priceController.text.isEmpty ||
-        _selectedImage == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Please fill all fields and select an image')),
-      );
-      return;
-    }
-
-    final product = ProductModel(
-      id: widget.product?.id ?? '',
-      name: _nameController.text,
-      description: _descriptionController.text,
-      price: double.parse(_priceController.text),
-      imageUrl: _selectedImage!.path, // Use path for upload
-    );
-
-    // Dispatch appropriate event based on whether we're adding or updating
-    BlocProvider.of<ProductBloc>(context).add(
-      widget.product == null
-          ? CreateProductEvent(
-              product,
-              _selectedImage!
-                  .path) // Assuming this event handles the image upload as well
-          : UpdateProductEvent(product),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ProductBloc(
-        getAllProducts: sl(),
-        getProduct: sl(),
-        updateProduct: sl(),
-        deleteProduct: sl(),
-        insertProduct: sl(),
-      ),
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new,
-                color: Color.fromARGB(255, 54, 104, 255), size: 20),
-            onPressed: () => Navigator.pop(context),
-          ),
-          centerTitle: true,
-          title: Text(
-            widget.product == null ? 'Add Product' : 'Update Product',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new,
+              color: Color.fromARGB(255, 54, 104, 255), size: 20),
+          onPressed: () => Navigator.pop(context),
         ),
-        body: BlocListener<ProductBloc, ProductState>(
-          listener: (context, state) {
-            if (state is AddPageSubmittedState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Product added successfully')),
-              );
-              // Navigate to details page with the newly added product
-              Navigator.pushReplacementNamed(context, '/product-details',
-                  arguments: state.product);
-            } else if (state is UpdatePageSubmittedState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Product updated successfully')),
-              );
-              // Navigate to details page with the updated product
-              Navigator.pushReplacementNamed(context, '/product-details',
-                  arguments: state.product);
-            } else if (state is ErrorProductState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
-            }
-          },
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 16),
-                  ImageUploadWidget(
-                    onImagePicked: _handleImagePicked,
-                    imageFile: _selectedImage,
+        centerTitle: true,
+        title: Text(
+          widget.product == null ? 'Add Product' : 'Update Product',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+      ),
+      body: BlocListener<ProductBloc, ProductState>(
+        listener: (context, state) {
+          if (state is AddPageSubmittedState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Product added successfully')),
+            );
+            // Navigate to details page with the newly added product
+            Navigator.pushReplacementNamed(context, '/product-details',
+                arguments: state.product);
+          } else if (state is UpdatePageSubmittedState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Product updated successfully')),
+            );
+            // Navigate to details page with the updated product
+            Navigator.pushReplacementNamed(context, '/product-details',
+                arguments: state.product);
+          } else if (state is ErrorProductState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          }
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 16),
+                ImageUploadWidget(
+                  onImagePicked: _handleImagePicked,
+                  imageFile: _selectedImage,
+                ),
+                const SizedBox(height: 16),
+                const Text('Name', style: TextStyle(fontSize: 16)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    fillColor: const Color.fromRGBO(243, 243, 243, 1),
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  const Text('Name', style: TextStyle(fontSize: 16)),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      fillColor: const Color.fromRGBO(243, 243, 243, 1),
-                      filled: true,
-                      border: OutlineInputBorder(
+                ),
+                const SizedBox(height: 16),
+                const Text('Price', style: TextStyle(fontSize: 16)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _priceController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    fillColor: const Color.fromRGBO(243, 243, 243, 1),
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    suffixText: '\$',
+                    suffixStyle: const TextStyle(color: Colors.black),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('Description', style: TextStyle(fontSize: 16)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _descriptionController,
+                  maxLines: 6,
+                  decoration: InputDecoration(
+                    fillColor: const Color.fromRGBO(243, 243, 243, 1),
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          const Color.fromARGB(255, 54, 104, 255),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text('Price', style: TextStyle(fontSize: 16)),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _priceController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      fillColor: const Color.fromRGBO(243, 243, 243, 1),
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      suffixText: '\$',
-                      suffixStyle: const TextStyle(color: Colors.black),
+                    onPressed: () {
+                      final name = _nameController.text;
+                      final description = _descriptionController.text;
+                      final price = double.tryParse(_priceController.text);
+                      final imageUrl = _selectedImage?.path ?? '';
+    
+                      if (name.isEmpty ||
+                          description.isEmpty ||
+                          price == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please fill in all fields'),
+                          ),
+                        );
+                        return;
+                      }
+    
+                      final product = ProductModel(
+                        id: widget.product?.id ?? '',
+                        name: name,
+                        description: description,
+                        price: price,
+                        imageUrl: imageUrl,
+                      );
+    
+                      BlocProvider.of<ProductBloc>(context).add(
+                        CreateProductEvent(product, imageUrl),
+                      );
+                    },
+                    child: Text(
+                      widget.product == null ? 'ADD' : 'UPDATE',
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w600),
+                      textAlign: TextAlign.center,
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  const Text('Description', style: TextStyle(fontSize: 16)),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _descriptionController,
-                    maxLines: 6,
-                    decoration: InputDecoration(
-                      fillColor: const Color.fromRGBO(243, 243, 243, 1),
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromARGB(255, 54, 104, 255),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: _submitProduct,
-                      child: Text(
-                        widget.product == null ? 'ADD' : 'UPDATE',
-                        style: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w600),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
