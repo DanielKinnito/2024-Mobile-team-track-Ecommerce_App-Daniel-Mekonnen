@@ -13,151 +13,250 @@ import '../../helpers/mocks.mocks.dart';
 void main() {
   late ProductRemoteDataSourceImpl dataSource;
   late MockHttpClient mockHttpClient;
+  late MockSharedPreferences mockSharedPreferences;
 
   setUp(() {
     mockHttpClient = MockHttpClient();
-    dataSource = ProductRemoteDataSourceImpl(client: mockHttpClient);
+    mockSharedPreferences = MockSharedPreferences();
+    dataSource = ProductRemoteDataSourceImpl(
+      client: mockHttpClient,
+      sharedPreferences: mockSharedPreferences,
+    );
   });
 
-  const tProduct = ProductModel(
-    id: '6672752cbd218790438efdb0',
-    name: 'Anime website',
-    description: 'Explore anime characters.',
-    price: 123,
-    imageUrl:
-        'https://res.cloudinary.com/g5-mobile-track/image/upload/v1718777132/images/zxjhzrflkvsjutgbmr0f.jpg',
-  );
+  group('ProductRemoteDataSourceImpl', () {
+    const tToken = 'test_token';
+    const tProduct = ProductModel(
+      id: '1',
+      name: 'Test Product',
+      description: 'Description of Test Product',
+      price: 10.0,
+      imageUrl: 'http://example.com/image.png',
+    );
 
-  final tProductJson = jsonEncode({'data': tProduct.toJson()});
+    final tProductList = [tProduct];
+    final tProductListJson =
+        json.encode({'data': tProductList.map((p) => p.toJson()).toList()});
 
-  final tProductList = [
-    tProduct,
-    // Additional products...
-  ];
-
-  final tProductListJson = jsonEncode(
-    {'data': tProductList.map<Map<String, dynamic>>((product) => product.toJson()).toList()},
-  );
-
-  group('getAllProducts', () {
-    test('should return List<ProductModel> when the response code is 200', () async {
-      // arrange
-      when(mockHttpClient.get(Uri.parse(Urls.getAllProducts())))
-          .thenAnswer((_) async => http.Response(tProductListJson, 200));
-      // act
-      final result = await dataSource.getAllProducts();
-      // assert
-      expect(result, equals(tProductList));
+    setUp(() {
+      when(mockSharedPreferences.getString('access_token')).thenReturn(tToken);
     });
 
-    test('should throw ServerException when the response code is not 200', () async {
-      // arrange
-      when(mockHttpClient.get(Uri.parse(Urls.getAllProducts())))
-          .thenAnswer((_) async => http.Response('Something went wrong', 500));
-      // act
+    test('should return list of products when getAllProducts is called',
+        () async {
+      // Arrange
+      when(mockHttpClient.get(
+        Uri.parse(Urls.getAllProducts()),
+        headers: {'Authorization': 'Bearer $tToken'},
+      )).thenAnswer((_) async => http.Response(tProductListJson, 200));
+
+      // Act
+      final result = await dataSource.getAllProducts();
+
+      // Assert
+      expect(result, tProductList);
+      verify(mockHttpClient.get(
+        Uri.parse(Urls.getAllProducts()),
+        headers: {'Authorization': 'Bearer $tToken'},
+      )).called(1);
+    });
+
+    test(
+        'should throw AuthenticationException when token is null in getAllProducts',
+        () async {
+      // Arrange
+      when(mockSharedPreferences.getString('access_token')).thenReturn(null);
+
+      // Act
       final call = dataSource.getAllProducts;
-      // assert
+
+      // Assert
+      expect(() => call(), throwsA(isA<AuthenticationException>()));
+    });
+
+    test(
+        'should throw ServerException when getAllProducts returns non-200 status code',
+        () async {
+      // Arrange
+      when(mockHttpClient.get(
+        Uri.parse(Urls.getAllProducts()),
+        headers: {'Authorization': 'Bearer $tToken'},
+      )).thenAnswer((_) async => http.Response('Server Error', 500));
+
+      // Act
+      final call = dataSource.getAllProducts;
+
+      // Assert
       expect(() => call(), throwsA(isA<ServerException>()));
     });
-  });
 
-  group('getProduct', () {
-    test('should return ProductModel when the response code is 200', () async {
-      // arrange
-      when(mockHttpClient.get(Uri.parse(Urls.getProduct(tProduct.id))))
-          .thenAnswer((_) async => http.Response(tProductJson, 200));
-      // act
-      final result = await dataSource.getProduct(tProduct.id);
-      // assert
-      expect(result, equals(tProduct));
+    test('should return a product when getProduct is called', () async {
+      // Arrange
+      when(mockHttpClient.get(
+        Uri.parse(Urls.getProduct('1')),
+        headers: {'Authorization': 'Bearer $tToken'},
+      )).thenAnswer((_) async =>
+          http.Response(json.encode({'data': tProduct.toJson()}), 200));
+
+      // Act
+      final result = await dataSource.getProduct('1');
+
+      // Assert
+      expect(result, tProduct);
+      verify(mockHttpClient.get(
+        Uri.parse(Urls.getProduct('1')),
+        headers: {'Authorization': 'Bearer $tToken'},
+      )).called(1);
     });
 
-    test('should throw ServerException when the response code is not 200', () async {
-      // arrange
-      when(mockHttpClient.get(Uri.parse(Urls.getProduct(tProduct.id))))
-          .thenAnswer((_) async => http.Response('Something went wrong', 500));
-      // act
+    test(
+        'should throw AuthenticationException when token is null in getProduct',
+        () async {
+      // Arrange
+      when(mockSharedPreferences.getString('access_token')).thenReturn(null);
+
+      // Act
       final call = dataSource.getProduct;
-      // assert
-      expect(() => call(tProduct.id), throwsA(isA<ServerException>()));
-    });
-  });
 
-  group('insertProduct', () {
-    test('should return ProductModel when the response code is 201', () async {
-      // arrange
-      when(mockHttpClient.post(
-        Uri.parse(Urls.insertProduct()),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(tProduct.toJson()),
-      )).thenAnswer((_) async => http.Response(tProductJson, 201));
-      // act
-      final result = await dataSource.insertProduct(tProduct);
-      // assert
-      expect(result, equals(tProduct));
+      // Assert
+      expect(() => call('1'), throwsA(isA<AuthenticationException>()));
     });
 
-    test('should throw ServerException when the response code is not 201', () async {
-      // arrange
-      when(mockHttpClient.post(
-        Uri.parse(Urls.insertProduct()),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(tProduct.toJson()),
-      )).thenAnswer((_) async => http.Response('Something went wrong', 500));
-      // act
+    test(
+        'should throw ServerException when getProduct returns non-200 status code',
+        () async {
+      // Arrange
+      when(mockHttpClient.get(
+        Uri.parse(Urls.getProduct('1')),
+        headers: {'Authorization': 'Bearer $tToken'},
+      )).thenAnswer((_) async => http.Response('Server Error', 500));
+
+      // Act
+      final call = dataSource.getProduct;
+
+      // Assert
+      expect(() => call('1'), throwsA(isA<ServerException>()));
+    });
+
+    test(
+        'should throw AuthenticationException when token is null in insertProduct',
+        () async {
+      // Arrange
+      when(mockSharedPreferences.getString('access_token')).thenReturn(null);
+
+      // Act
       final call = dataSource.insertProduct;
-      // assert
-      expect(() => call(tProduct), throwsA(isA<ServerException>()));
-    });
-  });
 
-  group('updateProduct', () {
-    test('should return ProductModel when the response code is 200', () async {
-      // arrange
+      // Assert
+      expect(() => call(tProduct), throwsA(isA<AuthenticationException>()));
+    });
+
+    test('should return a product when updateProduct is called', () async {
+      // Arrange
       when(mockHttpClient.put(
         Uri.parse(Urls.updateProduct(tProduct.id)),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(tProduct.toJson()),
-      )).thenAnswer((_) async => http.Response(tProductJson, 200));
-      // act
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $tToken',
+        },
+        body: json.encode(tProduct.toJson()),
+      )).thenAnswer((_) async =>
+          http.Response(json.encode({'data': tProduct.toJson()}), 200));
+
+      // Act
       final result = await dataSource.updateProduct(tProduct);
-      // assert
-      expect(result, equals(tProduct));
+
+      // Assert
+      expect(result, tProduct);
+      verify(mockHttpClient.put(
+        Uri.parse(Urls.updateProduct(tProduct.id)),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $tToken',
+        },
+        body: json.encode(tProduct.toJson()),
+      )).called(1);
     });
 
-    test('should throw ServerException when the response code is not 200', () async {
-      // arrange
+    test(
+        'should throw AuthenticationException when token is null in updateProduct',
+        () async {
+      // Arrange
+      when(mockSharedPreferences.getString('access_token')).thenReturn(null);
+
+      // Act
+      final call = dataSource.updateProduct;
+
+      // Assert
+      expect(() => call(tProduct), throwsA(isA<AuthenticationException>()));
+    });
+
+    test(
+        'should throw ServerException when updateProduct returns non-200 status code',
+        () async {
+      // Arrange
       when(mockHttpClient.put(
         Uri.parse(Urls.updateProduct(tProduct.id)),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(tProduct.toJson()),
-      )).thenAnswer((_) async => http.Response('Something went wrong', 500));
-      // act
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $tToken',
+        },
+        body: json.encode(tProduct.toJson()),
+      )).thenAnswer((_) async => http.Response('Server Error', 500));
+
+      // Act
       final call = dataSource.updateProduct;
-      // assert
+
+      // Assert
       expect(() => call(tProduct), throwsA(isA<ServerException>()));
     });
-  });
 
-  group('deleteProduct', () {
-    test('should return String when the response code is 200', () async {
-      // arrange
-      when(mockHttpClient.delete(Uri.parse(Urls.deleteProduct(tProduct.id))))
-          .thenAnswer((_) async => http.Response('Product deleted successfully', 200));
-      // act
-      final result = await dataSource.deleteProduct(tProduct.id);
-      // assert
-      expect(result, equals('Product deleted successfully'));
+    test('should return success message when deleteProduct is called',
+        () async {
+      // Arrange
+      when(mockHttpClient.delete(
+        Uri.parse(Urls.deleteProduct('1')),
+        headers: {'Authorization': 'Bearer $tToken'},
+      )).thenAnswer((_) async => http.Response('Deleted', 200));
+
+      // Act
+      final result = await dataSource.deleteProduct('1');
+
+      // Assert
+      expect(result, 'Deleted');
+      verify(mockHttpClient.delete(
+        Uri.parse(Urls.deleteProduct('1')),
+        headers: {'Authorization': 'Bearer $tToken'},
+      )).called(1);
     });
 
-    test('should throw ServerException when the response code is not 200', () async {
-      // arrange
-      when(mockHttpClient.delete(Uri.parse(Urls.deleteProduct(tProduct.id))))
-          .thenAnswer((_) async => http.Response('Something went wrong', 500));
-      // act
+    test(
+        'should throw AuthenticationException when token is null in deleteProduct',
+        () async {
+      // Arrange
+      when(mockSharedPreferences.getString('access_token')).thenReturn(null);
+
+      // Act
       final call = dataSource.deleteProduct;
-      // assert
-      expect(() => call(tProduct.id), throwsA(isA<ServerException>()));
+
+      // Assert
+      expect(() => call('1'), throwsA(isA<AuthenticationException>()));
+    });
+
+    test(
+        'should throw ServerException when deleteProduct returns non-200 status code',
+        () async {
+      // Arrange
+      when(mockHttpClient.delete(
+        Uri.parse(Urls.deleteProduct('1')),
+        headers: {'Authorization': 'Bearer $tToken'},
+      )).thenAnswer((_) async => http.Response('Server Error', 500));
+
+      // Act
+      final call = dataSource.deleteProduct;
+
+      // Assert
+      expect(() => call('1'), throwsA(isA<ServerException>()));
     });
   });
 }
